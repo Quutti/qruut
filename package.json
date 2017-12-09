@@ -1,0 +1,19 @@
+{
+  "name": "qruut",
+  "version": "1.0.0",
+  "description": "React component library for my own React projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Quutti/Qruut.git"
+  },
+  "author": "Jokke Liikkanen <quutticode@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Quutti/Qruut/issues"
+  },
+  "homepage": "https://github.com/Quutti/Qruut#readme"
+}
