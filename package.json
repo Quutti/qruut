@@ -2,8 +2,12 @@
   "name": "qruut",
   "version": "1.0.0",
   "description": "React component library for my own React projects",
-  "main": "index.js",
+  "main": "./dist",
   "scripts": {
+    "build": "./node_modules/.bin/npm-run-all clean tsc copy-css",
+    "clean": "./node_modules/.bin/rimraf dist",
+    "tsc": "./node_modules/.bin/tsc",
+    "copy-css": "./node_modules/.bin/gulp css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +19,25 @@
   "bugs": {
     "url": "https://github.com/Quutti/Qruut/issues"
   },
-  "homepage": "https://github.com/Quutti/Qruut#readme"
+  "homepage": "https://github.com/Quutti/Qruut#readme",
+  "devDependencies": {
+    "@types/classnames": "^2.2.3",
+    "@types/d3": "^4.12.0",
+    "@types/lodash": "^4.14.88",
+    "@types/react": "^16.0.28",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-typescript": "^3.2.3",
+    "merge2": "^1.2.0",
+    "npm-run-all": "^4.1.2",
+    "rimraf": "^2.6.2",
+    "typescript": "^2.6.2",
+  },
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "d3": "^4.12.0",
+    "font-awesome": "^4.7.0",
+    "lodash": "^4.17.4",
+    "react": "^16.2.0",
+  }
 }
