@@ -4,10 +4,9 @@
   "description": "React component library for my own React projects",
   "main": "./dist",
   "scripts": {
-    "build": "./node_modules/.bin/npm-run-all clean tsc copy-css",
+    "build": "./node_modules/.bin/gulp build",
     "clean": "./node_modules/.bin/rimraf dist",
     "tsc": "./node_modules/.bin/tsc",
-    "copy-css": "./node_modules/.bin/gulp css",
     "serve": "./node_modules/.bin/webpack-dev-server --history-api-fallback --inline --progress",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

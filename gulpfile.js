@@ -12,7 +12,7 @@ function getSrc(ext) {
 }
 
 function compileTypescript() {
-    const tsProject = typescript.createProject("./tsconfig.json");
+    const tsProject = typescript.createProject("./src/tsconfig.json");
     return gulp.src(getSrc(["ts", "tsx"]))
         .pipe(tsProject())
         .pipe(gulp.dest(dest, { base: "." }))
