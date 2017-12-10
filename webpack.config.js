@@ -1,4 +1,3 @@
-
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -41,7 +40,7 @@ module.exports = function getWebpackConfigs() {
                         loader: 'css-loader',
                         options: { importLoaders: 1, module: true, localIdentName: '[name]__[local]___[hash:base64:5]' }
                     },
-                    'postcss-loader'
+                    "postcss-loader"
                 ]
             })
         }]
@@ -57,7 +56,7 @@ module.exports = function getWebpackConfigs() {
     ];
 
     config.devServer = {
-        contentBase: './examples',
+        contentBase: '.',
         stats: 'minimal',
         port: PORT
     }

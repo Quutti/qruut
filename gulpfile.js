@@ -23,9 +23,15 @@ function copyCss() {
         .pipe(gulp.dest(dest, { base: "." }));
 }
 
+function copyJs() {
+    return gulp.src(getSrc("js"))
+        .pipe(gulp.dest(dest, { base: "." }));
+}
+
 gulp.task("build", ["clean"], () => {
     return merge([
         compileTypescript(),
+        copyJs(),
         copyCss()
     ]);
 });
