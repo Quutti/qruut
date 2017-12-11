@@ -3,6 +3,9 @@
         "baseUrl": ".",
         "module": "commonjs",
         "target": "es5",
-        "jsx": "react"
+        "jsx": "react",
+        "paths": {
+            "@components/*": ["../src/*"]
+        }
     }
 }

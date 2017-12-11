@@ -10,7 +10,10 @@ module.exports = function getWebpackConfigs() {
     const config = {};
 
     config.resolve = {
-        extensions: ['.ts', '.tsx', '.js', '.jsx']
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
+        alias: {
+            "@components": path.resolve(__dirname, "src")
+        }
     }
 
     config.entry = {
@@ -43,6 +46,9 @@ module.exports = function getWebpackConfigs() {
                     "postcss-loader"
                 ]
             })
+        }, {
+            test: /\.(png|jpg|jpeg|gif|json|svg|woff|woff2|ttf|eot)$/,
+            loader: 'file-loader'
         }]
     }
 

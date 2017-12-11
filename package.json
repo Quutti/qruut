@@ -31,6 +31,7 @@
     "css-loader": "^0.28.7",
     "debug-loader": "0.0.1",
     "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^1.1.5",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-typescript": "^3.2.3",
@@ -50,6 +51,7 @@
     "webpack-dev-server": "^2.9.7"
   },
   "dependencies": {
+    "bootstrap": "^4.0.0-beta.2",
     "classnames": "^2.2.5",
     "d3": "^4.12.0",
     "font-awesome": "^4.7.0",
