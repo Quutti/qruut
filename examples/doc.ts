@@ -4,5 +4,6 @@ export interface DocumentedComponent {
 }
 
 export interface DocProps {
-    name: string;
+    name: string,
+    stylePrefix?: string;
 }

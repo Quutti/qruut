@@ -7,6 +7,10 @@ import { Switch, Route } from "react-router";
 import { DocumentedComponent } from "./doc";
 import * as Examples from "./examples";
 
+
+import "../node_modules/font-awesome/css/font-awesome.min.css";
+import "../node_modules/bootstrap/dist/css/bootstrap-reboot.min.css";
+
 const exampleComponents: DocumentedComponent[] = [];
 
 for (let c of Object.keys(Examples)) {
