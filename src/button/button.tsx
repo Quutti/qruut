@@ -5,16 +5,16 @@ const styles: { [key: string]: any } = require("./button.css");
 
 export type ButtonClickHandler = () => void;
 
-export interface OwnProps {
+export interface ButtonProps {
     text: string;
     className?: string;
     disabled?: boolean;
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export class Button extends React.Component<OwnProps, {}> {
+export class Button extends React.Component<ButtonProps, {}> {
 
-    static defaultProps: Partial<OwnProps> = {
+    static defaultProps: Partial<ButtonProps> = {
         className: ""
     }
 
