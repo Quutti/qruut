@@ -7,6 +7,7 @@ import { Switch, Route } from "react-router";
 import { DocumentedComponent } from "./doc";
 import * as Examples from "./examples";
 
+import { GridContainer } from "@components/grid";
 
 import "../node_modules/font-awesome/css/font-awesome.min.css";
 import "../node_modules/bootstrap/dist/css/bootstrap-reboot.min.css";
@@ -30,13 +31,13 @@ const links = exampleComponents.map((c, i) => {
 
 ReactDOM.render((
     <BrowserRouter>
-        <div>
+        <GridContainer fixed={true}>
             <ul>
                 {links}
             </ul>
             <Switch>
                 {routes}
             </Switch>
-        </div>
+        </GridContainer>
     </BrowserRouter>
 ), document.getElementById("app"));
