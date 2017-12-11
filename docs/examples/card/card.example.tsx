@@ -1,5 +1,6 @@
 import * as React from "react";
 import { DocProps } from "../../doc";
+import { Doc } from "../../components/doc";
 import { Card } from "@components/card";
 import * as helpers from "../example-helpers";
 
@@ -10,7 +11,18 @@ const css: { [key: string]: any } = require("../helpers.css");
 export class CardExample extends React.Component<{}, {}> {
 
     static docProps: DocProps = {
-        name: "Card"
+        name: "Card",
+        props: {
+            "heading": {
+                type: "string",
+                desc: "Title shown in the component heading"
+            },
+            "className": helpers.getClassNameDescriptor(),
+            "style": {
+                type: "object",
+                desc: "Css styles for component"
+            }
+        }
     }
 
     render(): JSX.Element {
@@ -31,10 +43,7 @@ export class CardExample extends React.Component<{}, {}> {
                     <div>Using header with a colored card is not the best practise.</div>
                 </Card>
 
-                <h2>Component styling</h2>
-                <Card>
-                    {helpers.createStylingTable(CardExample.docProps.name)}
-                </Card>
+                <Doc doc={CardExample.docProps} />
             </div>
         )
     }
