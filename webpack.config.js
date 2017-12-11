@@ -17,7 +17,7 @@ module.exports = function getWebpackConfigs() {
     }
 
     config.entry = {
-        app: './examples/app.tsx'
+        app: './docs/app.tsx'
     }
 
     config.output = {
@@ -31,7 +31,7 @@ module.exports = function getWebpackConfigs() {
             use: [{
                 loader: "ts-loader",
                 options: {
-                    configFile: path.resolve(__dirname, "examples", "tsconfig.json")
+                    configFile: path.resolve(__dirname, "docs", "tsconfig.json")
                 }
             }]
         }, {
@@ -56,7 +56,7 @@ module.exports = function getWebpackConfigs() {
         extractCss,
 
         new HtmlWebpackPlugin({
-            template: './examples/index.html',
+            template: './docs/index.html',
             inject: 'body'
         })
     ];

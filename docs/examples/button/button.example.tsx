@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DocProps } from "../doc";
+import { DocProps } from "../../doc";
 import * as helpers from "../example-helpers";
 import { Card } from "@components/card";
 const css: { [key: string]: any } = require("../helpers.css");

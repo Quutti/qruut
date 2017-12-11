@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DocProps } from "../../examples/doc";
+import { DocProps } from "../../doc";
 import { Card } from "@components/card";
 
 import { GridCol, GridContainer, GridRow } from "@components/grid";

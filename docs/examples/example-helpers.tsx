@@ -1,8 +1,7 @@
 import * as React from "react";
-import * as styleVars from "../src/style-variables";
+import * as styleVars from "../../src/style-variables";
 
 export const createStylingTable = (name: string) => {
-
     const prefix = name.toLocaleLowerCase();
 
     const rows = Object.keys(styleVars)

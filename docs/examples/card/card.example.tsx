@@ -1,9 +1,9 @@
 import * as React from "react";
-import { DocProps } from "../doc";
+import { DocProps } from "../../doc";
 import { Card } from "@components/card";
 import * as helpers from "../example-helpers";
 
-import * as styleVars from "../../src/style-variables";
+import * as styleVars from "../../../src/style-variables";
 
 const css: { [key: string]: any } = require("../helpers.css");
 
