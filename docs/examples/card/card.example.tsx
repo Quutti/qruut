@@ -12,13 +12,13 @@ export class CardExample extends React.Component<{}, {}> {
 
     static docProps: DocProps = {
         name: "Card",
-        props: {
-            "heading": {
+        properties: {
+            heading: {
                 type: "string",
                 desc: "Title shown in the component heading"
             },
-            "className": helpers.getClassNameDescriptor(),
-            "style": {
+            className: helpers.getClassNameDescriptor(),
+            style: {
                 type: "object",
                 desc: "Css styles for component"
             }

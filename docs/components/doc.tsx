@@ -17,10 +17,8 @@ export class Doc extends React.Component<DocProps, {}> {
 
         return (
             <div>
-                <h2>Component properties</h2>
-                <Card className={css.mb3}>
-                    {createPropsTable(this.props.doc.props)}
-                </Card>
+
+                {this._getPropsTable()}
 
                 <h2>Component styling</h2>
                 <Card>
@@ -29,6 +27,25 @@ export class Doc extends React.Component<DocProps, {}> {
             </div>
         )
 
+    }
+
+    private _getPropsTable(): JSX.Element {
+
+        const { properties } = this.props.doc;
+
+        if (!properties) {
+            return null;
+        }
+
+        return (
+            <div>
+                <h2>Component properties</h2>
+                <Card className={css.mb3}>
+                    {createPropsTable(properties)}
+                </Card>
+            </div>
+
+        )
     }
 
 }

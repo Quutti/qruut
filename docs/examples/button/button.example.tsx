@@ -11,18 +11,18 @@ export class ButtonExample extends React.Component<{}, {}> {
 
     static docProps: DocProps = {
         name: "Button",
-        props: {
-            "text": {
+        properties: {
+            text: {
                 required: true,
                 type: "string",
                 desc: "Text for the Button",
             },
-            "className": helpers.getClassNameDescriptor(),
-            "disabled": {
+            className: helpers.getClassNameDescriptor(),
+            disabled: {
                 type: "boolean",
                 desc: "Is button enabled or disabled"
             },
-            "onClick": {
+            onClick: {
                 required: true,
                 type: "function(evt)",
                 desc: "Handles button click"

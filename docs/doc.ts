@@ -11,6 +11,5 @@ export interface DocPropsProp {
 
 export interface DocProps {
     name: string,
-    props: { [key: string]: DocPropsProp };
-    stylePrefix?: string;
+    properties?: { [key: string]: DocPropsProp };
 }

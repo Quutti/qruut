@@ -9,8 +9,7 @@ const css: { [key: string]: any } = require("../helpers.css");
 export class GridExample extends React.Component<{}, {}> {
 
     static docProps: DocProps = {
-        name: "Grid",
-        props: {}
+        name: "Grid"
     }
 
     render(): JSX.Element {
