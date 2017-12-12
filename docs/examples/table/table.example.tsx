@@ -13,42 +13,31 @@ export class TableExample extends React.Component<{}, {}> {
     }
 
     public render(): JSX.Element {
+
+        const rows: JSX.Element[] = [];
+        for (let i = 0; i < 40; i++) {
+            rows.push(
+                <TableRow key={i}>
+                    <TableCel text={`Item ${i}`} />
+                    <TableCel text={`${1000 + i}`} align="right" />
+                    <TableCel text={`Some decription for item ${i}`} />
+                </TableRow>
+            )
+        }
+
         return (
             <div>
                 <h2>Examples</h2>
 
                 <Card heading="Table example" className={css.mb3}>
-
-                    <Table>
+                    <Table itemsPerPage={10}>
                         <TableCol text="Test" />
                         <TableCol text="Test col 2" />
                         <TableCol text="Test column 3" width="50%" />
 
-                        <TableRow key={0}>
-                            <TableCel text="abs" />
-                            <TableCel text="1515" align="right" />
-                            <TableCel text="abs" />
-                        </TableRow>
+                        {rows}
 
-                        <TableRow key={1}>
-                            <TableCel text="abs" />
-                            <TableCel text="16161" align="right" />
-                            <TableCel text="abs" />
-                        </TableRow>
-
-                        <TableRow key={2}>
-                            <TableCel text="abs" />
-                            <TableCel text="1661" align="right" />
-                            <TableCel text="abs" />
-                        </TableRow >
-
-                        <TableRow key={3}>
-                            <TableCel text="abs" />
-                            <TableCel text="151" align="right" />
-                            <TableCel text="abs" />
-                        </TableRow>
                     </Table>
-
                 </Card>
             </div>
         )
