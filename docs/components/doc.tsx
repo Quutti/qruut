@@ -17,20 +17,15 @@ export class Doc extends React.Component<DocProps, {}> {
 
         return (
             <div>
-
                 {this._getPropsTable()}
-
                 <h2>Component styling</h2>
-                <Card>
-                    {createStylingTable(this.props.doc.name)}
-                </Card>
+                <Card>{createStylingTable(this.props.doc.name)}</Card>
             </div>
         )
 
     }
 
     private _getPropsTable(): JSX.Element {
-
         const { properties } = this.props.doc;
 
         if (!properties) {
@@ -40,11 +35,8 @@ export class Doc extends React.Component<DocProps, {}> {
         return (
             <div>
                 <h2>Component properties</h2>
-                <Card className={css.mb3}>
-                    {createPropsTable(properties)}
-                </Card>
+                <Card className={css.mb3}>{createPropsTable(properties)}</Card>
             </div>
-
         )
     }
 
