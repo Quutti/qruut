@@ -1,0 +1,34 @@
+.root {
+
+}
+
+.table {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.headerRow {
+    border-bottom: 1px solid $table-header-row-border;
+}
+
+.header {
+     padding: .75rem 1.25rem;
+     font-size: 0.8rem;
+     font-weight: 600;
+     white-space: nowrap;
+}
+
+.row {
+    border-bottom: 1px solid $table-row-border;
+
+    &:last-child {
+        border-bottom: 0;
+    }
+}
+
+.cell {
+    padding: .75rem 1.25rem;
+    width: 1%;
+    white-space: nowrap;
+}

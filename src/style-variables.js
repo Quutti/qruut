@@ -26,4 +26,11 @@ styleObjects.push({
     "card-border-radius": "3px"
 });
 
+// Table
+
+styleObjects.push({
+    "table-header-row-border": primaryColor,
+    "table-row-border": "#e0e0e0"
+});
+
 module.exports = Object.assign({}, ...styleObjects);
