@@ -20,7 +20,7 @@ export class TableExample extends React.Component<{}, {}> {
                 <TableRow key={i}>
                     <TableCel text={`Item ${i}`} />
                     <TableCel text={`${1000 + i}`} align="right" />
-                    <TableCel text={`Some decription for item ${i}`} />
+                    <TableCel text={`Some decription for item ${i}. This must be so long text that cell will go into two lines so i can test it`} />
                 </TableRow>
             )
         }
@@ -32,7 +32,7 @@ export class TableExample extends React.Component<{}, {}> {
                 <Card heading="Table example" className={css.mb3}>
                     <Table itemsPerPage={10}>
                         <TableCol text="Test" />
-                        <TableCol text="Test col 2" />
+                        <TableCol text="Numeric value" align="right" />
                         <TableCol text="Test column 3" width="50%" />
 
                         {rows}

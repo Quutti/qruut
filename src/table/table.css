@@ -16,6 +16,7 @@
      padding: .75rem 1.25rem;
      font-size: 0.8rem;
      font-weight: 600;
+     width: 1%;
      white-space: nowrap;
 }
 
@@ -29,8 +30,6 @@
 
 .cell {
     padding: .75rem 1.25rem;
-    width: 1%;
-    white-space: nowrap;
 }
 
 .paginationContainer {
