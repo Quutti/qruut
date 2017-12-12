@@ -32,3 +32,11 @@
     width: 1%;
     white-space: nowrap;
 }
+
+.paginationContainer {
+    text-align: right;
+}
+
+.paginationLabel {
+    margin: 0 .75rem;
+}
