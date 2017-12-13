@@ -2,6 +2,7 @@ import * as React from "react";
 import * as classNames from "classnames";
 
 import { Button } from "../button/button";
+import { TablePagination } from "./table-pagination";
 import { TableColumnProps } from "./table-column";
 import { TablePrimaryKeyProps } from "./table-primary-key";
 
@@ -17,7 +18,7 @@ export interface TableProps {
 }
 
 export interface TableState {
-    activePage: number;
+    firstRenderedItemIndex: number;
     selectedRows: any[];
 }
 
@@ -27,19 +28,19 @@ export class Table extends React.Component<TableProps, TableState> {
         super(props);
 
         this.state = {
-            activePage: 0,
+            firstRenderedItemIndex: 0,
             selectedRows: []
         }
 
-        this._handleNextButtonClick = this._handleNextButtonClick.bind(this);
-        this._handlePrevButtonClick = this._handlePrevButtonClick.bind(this);
         this._handleRowCheckboxClick = this._handleRowCheckboxClick.bind(this);
     }
 
     public render(): JSX.Element {
 
+        const { selectable, itemsPerPage, data } = this.props;
+
         // Throw if table has selectable prop but TablePrimaryKey element is not in childrens
-        if (this.props.selectable && !this._getPrimaryKeyPropertyName()) {
+        if (selectable && !this._getPrimaryKeyPropertyName()) {
             throw new Error("Table must have TablePrimaryKey children when using Table with selectable");
         }
 
@@ -50,7 +51,15 @@ export class Table extends React.Component<TableProps, TableState> {
                     {this._createTableBody()}
                 </table>
 
-                {this._createPagination()}
+                {(
+                    itemsPerPage &&
+                    <TablePagination
+                        itemsPerPage={itemsPerPage}
+                        itemCount={data.length}
+                        onPageChange={(firstItemIndex: number) => this.setState({ firstRenderedItemIndex: firstItemIndex })}
+                    />
+                )}
+
             </div>
         )
     }
@@ -79,11 +88,9 @@ export class Table extends React.Component<TableProps, TableState> {
 
         let visibleRowsData;
         if (itemsPerPage) {
-            const { activePage } = this.state;
-            const start = itemsPerPage * activePage;
-            const end = (itemsPerPage * (activePage + 1));
-
-            visibleRowsData = data.slice(start, end);
+            const { firstRenderedItemIndex } = this.state;
+            const last = firstRenderedItemIndex + itemsPerPage;
+            visibleRowsData = data.slice(firstRenderedItemIndex, last);
         } else {
             visibleRowsData = data;
         }
@@ -191,37 +198,4 @@ export class Table extends React.Component<TableProps, TableState> {
         }
     }
 
-    private _getTotalPageCount() {
-        return Math.ceil(this.props.data.length / this.props.itemsPerPage)
-    }
-
-    private _createPagination(): JSX.Element {
-        const { itemsPerPage } = this.props;
-        if (!itemsPerPage) {
-            return null;
-        }
-
-        const { activePage } = this.state;
-        const totalPages = this._getTotalPageCount();
-
-        return (
-            <div className={styles.paginationContainer}>
-                <Button text="Prev" disabled={activePage === 0} onClick={this._handlePrevButtonClick} />
-                <span className={styles.paginationLabel}>{`${activePage + 1} of ${totalPages}`}</span>
-                <Button text="Next" disabled={activePage === (totalPages - 1)} onClick={this._handleNextButtonClick} />
-            </div>
-        )
-    }
-
-    private _handlePrevButtonClick() {
-        if (this.state.activePage > 0) {
-            this.setState({ activePage: this.state.activePage - 1 })
-        }
-    }
-
-    private _handleNextButtonClick() {
-        if (this.state.activePage < this._getTotalPageCount() - 1) {
-            this.setState({ activePage: this.state.activePage + 1 })
-        }
-    }
 }

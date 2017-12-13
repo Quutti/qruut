@@ -16,10 +16,10 @@ export class TableExample extends React.Component<{}, {}> {
 
         const data = [];
 
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 44; i++) {
             data.push({
                 id: `id-${i}`,
-                v1: "Abc",
+                v1: `Some value of item ${i}`,
                 v2: "15125",
                 v3: "sdkasodk akdopk aksdk asopkd posak doskaop kdopaopdasd sad asd ad asd ask pdokapok sdopk asopkdpoak sdad as podksa odkaop kdopk a"
             });
