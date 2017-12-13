@@ -2,11 +2,13 @@ import * as React from "react";
 import * as classNames from "classnames";
 
 import { Button } from "../button/button";
+import { TableColumnProps } from "./table-column";
 
 const styles: { [key: string]: any } = require("./table.css");
 
 export interface TableProps {
     itemsPerPage?: number;
+    data: { [key: string]: any };
 }
 
 export interface TableState {
@@ -31,7 +33,7 @@ export class Table extends React.Component<TableProps, TableState> {
             <div className={styles.root}>
                 <table className={styles.table}>
                     {this._createTableHead()}
-                    <tbody>{this._createRows()}</tbody>
+                    {this._createTableBody()}
                 </table>
 
                 {this._createPagination()}
@@ -40,23 +42,67 @@ export class Table extends React.Component<TableProps, TableState> {
     }
 
     private _createTableHead(): JSX.Element {
-        const headers = this._getChildrenOfType("TableCol");
-        return (headers.length) ? <thead><tr className={styles.headerRow}>{headers}</tr></thead> : null;
+        const elems = this._getChildrenOfType("TableColumn").map((header, index) => {
+            const { text, type } = header.props as TableColumnProps;
+            const style = { textAlign: (type === "numeric") ? "right" : "left" };
+            return <th key={index} style={style} className={styles.header}>{text}</th>
+        });
+
+        return <thead><tr className={styles.headerRow}>{elems}</tr></thead>;
     }
 
-    private _createRows(): any[] {
-        const rows = this._getChildrenOfType("TableRow");
-        const { itemsPerPage } = this.props;
+    private _createTableBody(): JSX.Element {
+        const { data, itemsPerPage } = this.props;
+        const headers = this._getChildrenOfType("TableColumn");
 
-        if (!itemsPerPage) {
-            return rows;
+        let visibleRowsData;
+
+        if (itemsPerPage) {
+            const { activePage } = this.state;
+            const start = itemsPerPage * activePage;
+            const end = (itemsPerPage * (activePage + 1));
+
+            visibleRowsData = data.slice(start, end);
+        } else {
+            visibleRowsData = data;
         }
 
-        const { activePage } = this.state;
-        const start = itemsPerPage * activePage;
-        const end = (itemsPerPage * (activePage + 1));
+        const rows = visibleRowsData.map((rowData, index) => {
+            const cells = headers.map((header, index) => {
+                const { type, width, propertyKey } = header.props as TableColumnProps;
+                const value = rowData[propertyKey];
 
-        return rows.slice(start, end);
+                let text;
+                if (typeof value === "string") {
+                    text = value;
+                } else if (typeof value === "number") {
+                    text = `${value}`;
+                } else if (typeof value === "boolean") {
+                    text = value ? "True" : "False";
+                } else if (typeof value === "function") {
+                    text = value(rowData);
+                } else if (typeof value === "undefined") {
+                    text = "";
+                } else {
+                    text = value.toString();
+                }
+
+                const style: Partial<CSSStyleDeclaration> = {
+                    textAlign: (type === "numeric") ? "right" : "left"
+                }
+
+                if (width) {
+                    style.width = width as string;
+                }
+
+                return <td key={index} className={styles.cell} style={style as any}>{text}</td>
+
+            });
+
+            return <tr key={index} className={styles.row}>{cells}</tr>;
+        });
+
+        return <tbody>{rows}</tbody>;
     }
 
     private _getChildrenOfType(type: string): any[] {
@@ -89,8 +135,7 @@ export class Table extends React.Component<TableProps, TableState> {
     }
 
     private _getTotalPageCount() {
-        const rows = this._getChildrenOfType("TableRow");
-        return Math.floor(rows.length / this.props.itemsPerPage)
+        return Math.floor(this.props.data.length / this.props.itemsPerPage)
     }
 
     private _handlePrevButtonClick() {

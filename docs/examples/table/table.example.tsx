@@ -2,7 +2,7 @@ import * as React from "react";
 import { DocProps } from "../../doc";
 import { Card } from "@components/card";
 
-import { Table, TableCol, TableCel, TableRow } from "@components/table";
+import { Table, TableColumn } from "@components/table";
 
 const css: { [key: string]: any } = require("../helpers.css");
 
@@ -14,15 +14,14 @@ export class TableExample extends React.Component<{}, {}> {
 
     public render(): JSX.Element {
 
-        const rows: JSX.Element[] = [];
+        const data = [];
+
         for (let i = 0; i < 40; i++) {
-            rows.push(
-                <TableRow key={i}>
-                    <TableCel text={`Item ${i}`} />
-                    <TableCel text={`${1000 + i}`} align="right" />
-                    <TableCel text={`Some decription for item ${i}. This must be so long text that cell will go into two lines so i can test it`} />
-                </TableRow>
-            )
+            data.push({
+                v1: "Abc",
+                v2: "15125",
+                v3: "sdkasodk akdopk aksdk asopkd posak doskaop kdopaopdasd sad asd ad asd ask pdokapok sdopk asopkdpoak sdad as podksa odkaop kdopk a"
+            });
         }
 
         return (
@@ -30,13 +29,10 @@ export class TableExample extends React.Component<{}, {}> {
                 <h2>Examples</h2>
 
                 <Card heading="Table example" className={css.mb3}>
-                    <Table itemsPerPage={10}>
-                        <TableCol text="Test" />
-                        <TableCol text="Numeric value" align="right" />
-                        <TableCol text="Test column 3" width="50%" />
-
-                        {rows}
-
+                    <Table itemsPerPage={10} data={data}>
+                        <TableColumn text="Test" propertyKey="v1" />
+                        <TableColumn text="Numeric value" propertyKey="v2" type="numeric" />
+                        <TableColumn text="Test column 3" propertyKey="v3" />
                     </Table>
                 </Card>
             </div>
