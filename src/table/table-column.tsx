@@ -1,7 +1,5 @@
 import * as React from "react";
 
-const styles: { [key: string]: any } = require("./table.css");
-
 export type TableColumnType = "text" | "numeric";
 
 export interface TableColumnProps {

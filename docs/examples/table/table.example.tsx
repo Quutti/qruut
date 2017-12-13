@@ -2,7 +2,7 @@ import * as React from "react";
 import { DocProps } from "../../doc";
 import { Card } from "@components/card";
 
-import { Table, TableColumn } from "@components/table";
+import { Table, TableColumn, TablePrimaryKey } from "@components/table";
 
 const css: { [key: string]: any } = require("../helpers.css");
 
@@ -18,6 +18,7 @@ export class TableExample extends React.Component<{}, {}> {
 
         for (let i = 0; i < 40; i++) {
             data.push({
+                id: `id-${i}`,
                 v1: "Abc",
                 v2: "15125",
                 v3: "sdkasodk akdopk aksdk asopkd posak doskaop kdopaopdasd sad asd ad asd ask pdokapok sdopk asopkdpoak sdad as podksa odkaop kdopk a"
@@ -29,10 +30,12 @@ export class TableExample extends React.Component<{}, {}> {
                 <h2>Examples</h2>
 
                 <Card heading="Table example" className={css.mb3}>
-                    <Table itemsPerPage={10} data={data}>
+                    <Table itemsPerPage={10} data={data} selectable>
                         <TableColumn text="Test" propertyKey="v1" />
                         <TableColumn text="Numeric value" propertyKey="v2" type="numeric" />
                         <TableColumn text="Test column 3" propertyKey="v3" />
+
+                        <TablePrimaryKey propertyKey="id" />
                     </Table>
                 </Card>
             </div>

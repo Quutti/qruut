@@ -16,6 +16,7 @@
      padding: .75rem 1.25rem;
      font-size: 0.8rem;
      font-weight: 600;
+     white-space: nowrap;
 }
 
 .row {
@@ -35,6 +36,10 @@
         width: "auto";
         white-space: normal;
     }
+}
+
+.checkboxCell {
+    text-align: center;
 }
 
 .paginationContainer {
