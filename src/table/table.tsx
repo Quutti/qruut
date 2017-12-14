@@ -4,7 +4,6 @@ import * as classNames from "classnames";
 import { Button } from "../button/button";
 import { TablePagination } from "./table-pagination";
 import { TableColumnProps } from "./table-column";
-import { TablePrimaryKeyProps } from "./table-primary-key";
 
 const styles: { [key: string]: any } = require("./table.css");
 
@@ -12,6 +11,7 @@ export type TableRowDataEntry = { [key: string]: any };
 
 export interface TableProps {
     data: TableRowDataEntry[];
+    uniqueIdKey?: string;
     itemsPerPage?: number;
     selectable?: boolean;
     onSelectionChange?: (selectedIds: any[]) => void;
@@ -37,11 +37,11 @@ export class Table extends React.Component<TableProps, TableState> {
 
     public render(): JSX.Element {
 
-        const { selectable, itemsPerPage, data } = this.props;
+        const { selectable, uniqueIdKey, itemsPerPage, data } = this.props;
 
         // Throw if table has selectable prop but TablePrimaryKey element is not in childrens
-        if (selectable && !this._getPrimaryKeyPropertyName()) {
-            throw new Error("Table must have TablePrimaryKey children when using Table with selectable");
+        if (selectable && !uniqueIdKey) {
+            throw new Error("Table property uniqueIdKey is required when using selectable mode");
         }
 
         return (
@@ -103,7 +103,7 @@ export class Table extends React.Component<TableProps, TableState> {
     }
 
     private _createCellsOfRow(rowData: TableRowDataEntry): JSX.Element[] {
-        const { selectable } = this.props;
+        const { selectable, uniqueIdKey } = this.props;
 
         const cells = this._getChildrenOfType("TableColumn").map((header, index) => {
             const { type, width, propertyKey } = header.props as TableColumnProps;
@@ -137,7 +137,7 @@ export class Table extends React.Component<TableProps, TableState> {
 
         // If selectable mode is on add checkbox cell as a first cell of every row
         if (selectable) {
-            const id = rowData[this._getPrimaryKeyPropertyName()];
+            const id = rowData[uniqueIdKey];
             const checked = this.state.selectedRows.indexOf(id) > -1;
             const tdClasses = [styles.cell, styles.checkboxCell].join(" ");
 
@@ -166,20 +166,8 @@ export class Table extends React.Component<TableProps, TableState> {
         return children;
     }
 
-    private _getPrimaryKeyPropertyName(): string {
-        const primary = this._getChildrenOfType("TablePrimaryKey")[0];
-        if (primary) {
-            const { propertyKey } = primary.props as TablePrimaryKeyProps;
-            if (propertyKey) {
-                return propertyKey;
-            }
-        }
-
-        return null;
-    }
-
     private _handleRowCheckboxClick(evt: any, rowData: TableRowDataEntry) {
-        const id = rowData[this._getPrimaryKeyPropertyName()];
+        const id = rowData[this.props.uniqueIdKey];
         const newSelectedRows = [...this.state.selectedRows];
 
         if (evt.target.checked) {

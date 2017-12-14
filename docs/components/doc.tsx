@@ -52,8 +52,6 @@ const createStylingTable = (name: string) => {
             return { prop: `$${v}`, value: styleVars[v] };
         });
 
-
-
     return (
         <Table data={rows}>
             <TableColumn propertyKey="prop" text="Variable" />
@@ -77,5 +75,5 @@ const createPropsTable = (p: { [key: string]: doc.DocPropsProp }) => {
             <TableColumn propertyKey="required" text="Required" />
             <TableColumn propertyKey="desc" text="Description" />
         </Table>
-    )
+    );
 }

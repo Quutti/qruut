@@ -2,7 +2,7 @@ import * as React from "react";
 import { DocProps } from "../../doc";
 import { Card } from "@components/card";
 
-import { Table, TableColumn, TablePrimaryKey } from "@components/table";
+import { Table, TableColumn } from "@components/table";
 
 const css: { [key: string]: any } = require("../helpers.css");
 
@@ -30,12 +30,10 @@ export class TableExample extends React.Component<{}, {}> {
                 <h2>Examples</h2>
 
                 <Card heading="Table example" className={css.mb3}>
-                    <Table itemsPerPage={10} data={data} selectable>
+                    <Table itemsPerPage={10} data={data} selectable uniqueIdKey="id">
                         <TableColumn text="Test" propertyKey="v1" />
                         <TableColumn text="Numeric value" propertyKey="v2" type="numeric" />
                         <TableColumn text="Test column 3" propertyKey="v3" />
-
-                        <TablePrimaryKey propertyKey="id" />
                     </Table>
                 </Card>
             </div>
