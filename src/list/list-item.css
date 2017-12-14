@@ -1,0 +1,25 @@
+.root {
+    padding: .75rem 1.25rem;
+    border-bottom: 1px solid $list-item-border;
+
+    &:last-child {
+        border-bottom: 0;
+    }
+}
+
+.content {
+
+}
+
+.link {
+    display: block;
+    margin: -0.75rem -1.25rem;
+    padding: .75rem 1.25rem;
+    background-color: transparent;
+    transition: background-color .15s ease;
+
+    &:hover {
+        text-decoration: none;
+        background-color: $list-item-link-hover;
+    }
+}
