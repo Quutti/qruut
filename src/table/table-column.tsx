@@ -12,7 +12,6 @@ export interface TableColumnProps {
 export class TableColumn extends React.Component<TableColumnProps, {}> {
 
     static defaultProps: Partial<TableColumnProps> = {
-        width: "auto",
         type: "text"
     }
 

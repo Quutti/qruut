@@ -2,6 +2,7 @@ import * as React from "react";
 import * as doc from "../doc";
 import * as styleVars from "../../src/style-variables";
 import { Card } from "@components/card";
+import { Table, TableColumn } from "@components/table";
 
 import * as helpers from "../examples/example-helpers";
 
@@ -48,28 +49,17 @@ const createStylingTable = (name: string) => {
     const rows = Object.keys(styleVars)
         .filter(v => v.indexOf(prefix) === 0)
         .map((v, index) => {
-            return (
-                <tr key={index}>
-                    <td>{v}</td>
-                    <td>{styleVars[v]}</td>
-                </tr>
-            )
+            return { prop: `$${v}`, value: styleVars[v] };
         });
 
-    return (
-        <table>
-            <thead>
-                <tr>
-                    <th>Variable</th>
-                    <th>Default value</th>
-                </tr>
-            </thead>
-            <tbody>
-                {rows}
-            </tbody>
-        </table>
-    )
 
+
+    return (
+        <Table data={rows}>
+            <TableColumn propertyKey="prop" text="Variable" />
+            <TableColumn propertyKey="value" text="Default value" />
+        </Table>
+    );
 }
 
 const createPropsTable = (p: { [key: string]: doc.DocPropsProp }) => {
@@ -77,29 +67,15 @@ const createPropsTable = (p: { [key: string]: doc.DocPropsProp }) => {
     const rows = Object.keys(p)
         .map((prop, index) => {
             const item = p[prop];
-            return (
-                <tr key={index}>
-                    <td>{prop}</td>
-                    <td>{item.type}</td>
-                    <td>{(item.required) ? "true" : "false"}</td>
-                    <td>{item.desc}</td>
-                </tr>
-            )
+            return { ...item, ...{ prop } };
         });
 
     return (
-        <table>
-            <thead>
-                <tr>
-                    <th>Property name</th>
-                    <th>Type</th>
-                    <th>Required</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {rows}
-            </tbody>
-        </table>
+        <Table data={rows}>
+            <TableColumn propertyKey="prop" text="Property name" />
+            <TableColumn propertyKey="type" text="Type" />
+            <TableColumn propertyKey="required" text="Required" />
+            <TableColumn propertyKey="desc" text="Description" />
+        </Table>
     )
 }

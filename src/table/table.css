@@ -33,7 +33,7 @@
     white-space: nowrap;
 
     &:last-child {
-        width: "auto";
+        width: auto;
         white-space: normal;
     }
 }
