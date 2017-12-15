@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { TableFilterFunction } from "./filters";
+
 export type TableColumnType = "text" | "numeric";
 
 export interface TableColumnProps {
@@ -7,6 +9,7 @@ export interface TableColumnProps {
     propertyKey: string;
     width?: number | string;
     type?: TableColumnType;
+    customFilter?: TableFilterFunction;
 }
 
 export class TableColumn extends React.Component<TableColumnProps, {}> {

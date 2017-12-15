@@ -1,6 +1,8 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
+import { TableFilterItem, TableFilterFunction, defaultFilter } from "./filters";
+
 import { Button } from "../button/button";
 import { TablePagination } from "./table-pagination";
 import { TableColumnProps } from "./table-column";
@@ -11,6 +13,7 @@ export type TableRowDataEntry = { [key: string]: any };
 
 export interface TableProps {
     data: TableRowDataEntry[];
+    filters?: boolean;
     uniqueIdKey?: string;
     itemsPerPage?: number;
     selectable?: boolean;
@@ -20,6 +23,7 @@ export interface TableProps {
 export interface TableState {
     firstRenderedItemIndex: number;
     selectedRows: any[];
+    activeFilters: { [key: string]: TableFilterItem };
 }
 
 export class Table extends React.Component<TableProps, TableState> {
@@ -29,7 +33,8 @@ export class Table extends React.Component<TableProps, TableState> {
 
         this.state = {
             firstRenderedItemIndex: 0,
-            selectedRows: []
+            selectedRows: [],
+            activeFilters: {}
         }
 
         this._handleRowCheckboxClick = this._handleRowCheckboxClick.bind(this);
@@ -44,18 +49,20 @@ export class Table extends React.Component<TableProps, TableState> {
             throw new Error("Table property uniqueIdKey is required when using selectable mode");
         }
 
+        const filteredData = this._getFilteredData(data);
+
         return (
             <div className={styles.root}>
                 <table className={styles.table}>
                     {this._createTableHead()}
-                    {this._createTableBody()}
+                    {this._createTableBody(filteredData)}
                 </table>
 
                 {(
                     itemsPerPage &&
                     <TablePagination
                         itemsPerPage={itemsPerPage}
-                        itemCount={data.length}
+                        itemCount={filteredData.length}
                         onPageChange={(firstItemIndex: number) => this.setState({ firstRenderedItemIndex: firstItemIndex })}
                     />
                 )}
@@ -65,34 +72,63 @@ export class Table extends React.Component<TableProps, TableState> {
     }
 
     private _createTableHead(): JSX.Element {
-        const { selectable } = this.props;
+        const { selectable, filters } = this.props;
+        const headers = this._getChildrenOfType("TableColumn");
+        let filterCells = [];
+        let headerCells = [];
 
-        const headerCells = this._getChildrenOfType("TableColumn").map((header, index) => {
-            const { text, type } = header.props as TableColumnProps;
+        headers.forEach((header, index) => {
+            const { text, type, propertyKey, customFilter } = header.props as TableColumnProps;
             const style = { textAlign: (type === "numeric") ? "right" : "left" };
-            return <th key={index} style={style} className={styles.header}>{text}</th>
+            headerCells.push(<th key={index} style={style} className={styles.header}>{text}</th>);
+
+            if (filters) {
+                // If col has customFilter specified use it, in other cases use defaultFilter
+                // from filters.ts module
+                const filterFunction = (typeof customFilter === "function") ? customFilter : defaultFilter;
+
+                filterCells.push(
+                    <th key={index}>
+                        <input
+                            className={styles.filter}
+                            placeholder="Filter..."
+                            onKeyUp={(evt) => this._handleFilterInput(evt, propertyKey, filterFunction)}
+                        />
+                    </th>
+                );
+            }
         });
 
         if (selectable) {
             const selectedCount = this.state.selectedRows.length;
             const text = (selectedCount > 0) ? `${selectedCount}` : "";
             const classes = [styles.header, styles.checkboxCell].join(" ");
-            headerCells.unshift(<td key={"selection-header"} className={classes}>{text}</td>);
+            headerCells.unshift(<th key={"selection-header"} className={classes}>{text}</th>);
+
+            // Add empty cell to the beginning of the filters array too
+            if (filters) {
+                filterCells.unshift(<th />);
+            }
         }
 
-        return <thead><tr className={styles.headerRow}>{headerCells}</tr></thead>;
+        return (
+            <thead>
+                {!!filterCells.length && <tr>{filterCells}</tr>}
+                <tr className={styles.headerRow}>{headerCells}</tr>
+            </thead>
+        );
     }
 
-    private _createTableBody(): JSX.Element {
-        const { data, itemsPerPage } = this.props;
+    private _createTableBody(filteredData: TableRowDataEntry[]): JSX.Element {
+        const { itemsPerPage } = this.props;
 
         let visibleRowsData;
         if (itemsPerPage) {
             const { firstRenderedItemIndex } = this.state;
             const last = firstRenderedItemIndex + itemsPerPage;
-            visibleRowsData = data.slice(firstRenderedItemIndex, last);
+            visibleRowsData = filteredData.slice(firstRenderedItemIndex, last);
         } else {
-            visibleRowsData = data;
+            visibleRowsData = filteredData;
         }
 
         const rows = visibleRowsData.map((rowData, index) => {
@@ -184,6 +220,40 @@ export class Table extends React.Component<TableProps, TableState> {
         if (typeof this.props.onSelectionChange === "function") {
             this.props.onSelectionChange(this.state.selectedRows);
         }
+    }
+
+    private _getFilteredData(data: TableRowDataEntry[]): TableRowDataEntry[] {
+
+        const { activeFilters } = this.state;
+
+        if (!this.props.filters) {
+            return data;
+        }
+
+        return data.filter(item => {
+            for (let key of Object.keys(activeFilters)) {
+                const af = activeFilters[key];
+                const match = af.filterFunction(item[key], af.value)
+
+                if (!match) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }
+
+    private _handleFilterInput(evt: any, propertyKey: string, filterFunction: TableFilterFunction) {
+        const value: string = evt.target.value;
+        const currentActiveFilters = this.state.activeFilters;
+        const newActiveFilters = {
+            [propertyKey]: { filterFunction, value }
+        };
+
+        this.setState({
+            activeFilters: { ...currentActiveFilters, ...newActiveFilters }
+        });
     }
 
 }

@@ -41,6 +41,13 @@ export class TablePagination extends React.Component<TablePaginationProps, Table
         )
     }
 
+    public componentWillReceiveProps(newProps: TablePaginationProps) {
+        // Jump to the first page if itemCount changes
+        if (newProps.itemCount !== this.props.itemCount) {
+            this._handlePageChange(0);
+        }
+    }
+
     private _getTotalPageCount() {
         return Math.ceil(this.props.itemCount / this.props.itemsPerPage)
     }

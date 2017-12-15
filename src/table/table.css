@@ -49,3 +49,9 @@
 .paginationLabel {
     margin: 0 .75rem;
 }
+
+.filter {
+    display: block;
+    width: 100%;
+    padding: .375rem .75rem;
+}
