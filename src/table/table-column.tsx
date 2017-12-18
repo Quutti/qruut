@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { TableFilterFunction } from "./filters";
+import { TableFilterFunction, TableSorterFunctionFactory } from "./helpers";
 
 export type TableColumnType = "text" | "numeric";
 
@@ -10,6 +10,7 @@ export interface TableColumnProps {
     width?: number | string;
     type?: TableColumnType;
     customFilter?: TableFilterFunction;
+    customSorterFactory?: TableSorterFunctionFactory;
 }
 
 export class TableColumn extends React.Component<TableColumnProps, {}> {

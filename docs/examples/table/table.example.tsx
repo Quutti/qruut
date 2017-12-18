@@ -30,7 +30,7 @@ export class TableExample extends React.Component<{}, {}> {
                 <h2>Examples</h2>
 
                 <Card heading="Table example" className={css.mb3}>
-                    <Table itemsPerPage={10} data={data} selectable uniqueIdKey="id">
+                    <Table itemsPerPage={10} data={data} selectable filterable sortable uniqueIdKey="id">
                         <TableColumn text="Test" propertyKey="v1" />
                         <TableColumn text="Numeric value" propertyKey="v2" type="numeric" />
                         <TableColumn text="Test column 3" propertyKey="v3" />

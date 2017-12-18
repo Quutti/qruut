@@ -1,19 +1,24 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { TableFilterItem, TableFilterFunction, defaultFilter } from "./filters";
+import {
+    TableFilterItem, TableFilterFunction, defaultFilter,
+    TableSorterItem, defaultSorterFactory, TableSorterFunction, TableSortDirection, TableSorterFunctionFactory
+} from "./helpers";
 
 import { Button } from "../button/button";
 import { TablePagination } from "./table-pagination";
 import { TableColumnProps } from "./table-column";
 
+const faStyles: { [key: string]: any } = require("font-awesome/css/font-awesome.min.css");
 const styles: { [key: string]: any } = require("./table.css");
 
 export type TableRowDataEntry = { [key: string]: any };
 
 export interface TableProps {
     data: TableRowDataEntry[];
-    filters?: boolean;
+    filterable?: boolean;
+    sortable?: boolean;
     uniqueIdKey?: string;
     itemsPerPage?: number;
     selectable?: boolean;
@@ -24,6 +29,7 @@ export interface TableState {
     firstRenderedItemIndex: number;
     selectedRows: any[];
     activeFilters: { [key: string]: TableFilterItem };
+    activeSorter: TableSorterItem;
 }
 
 export class Table extends React.Component<TableProps, TableState> {
@@ -34,14 +40,14 @@ export class Table extends React.Component<TableProps, TableState> {
         this.state = {
             firstRenderedItemIndex: 0,
             selectedRows: [],
-            activeFilters: {}
+            activeFilters: {},
+            activeSorter: null
         }
 
         this._handleRowCheckboxClick = this._handleRowCheckboxClick.bind(this);
     }
 
     public render(): JSX.Element {
-
         const { selectable, uniqueIdKey, itemsPerPage, data } = this.props;
 
         // Throw if table has selectable prop but TablePrimaryKey element is not in childrens
@@ -50,19 +56,20 @@ export class Table extends React.Component<TableProps, TableState> {
         }
 
         const filteredData = this._getFilteredData(data);
+        const sortedData = this._getSortedData(filteredData);
 
         return (
             <div className={styles.root}>
                 <table className={styles.table}>
                     {this._createTableHead()}
-                    {this._createTableBody(filteredData)}
+                    {this._createTableBody(sortedData)}
                 </table>
 
                 {(
-                    itemsPerPage &&
+                    !!itemsPerPage &&
                     <TablePagination
                         itemsPerPage={itemsPerPage}
-                        itemCount={filteredData.length}
+                        itemCount={sortedData.length}
                         onPageChange={(firstItemIndex: number) => this.setState({ firstRenderedItemIndex: firstItemIndex })}
                     />
                 )}
@@ -72,17 +79,48 @@ export class Table extends React.Component<TableProps, TableState> {
     }
 
     private _createTableHead(): JSX.Element {
-        const { selectable, filters } = this.props;
+        const { selectable, filterable, sortable } = this.props;
+        const { activeSorter } = this.state;
         const headers = this._getChildrenOfType("TableColumn");
         let filterCells = [];
         let headerCells = [];
+        let cellContent: JSX.Element | string;
 
         headers.forEach((header, index) => {
-            const { text, type, propertyKey, customFilter } = header.props as TableColumnProps;
+            const { text, type, propertyKey, customFilter, customSorterFactory } = header.props as TableColumnProps;
             const style = { textAlign: (type === "numeric") ? "right" : "left" };
-            headerCells.push(<th key={index} style={style} className={styles.header}>{text}</th>);
 
-            if (filters) {
+            // If sortable mode is on, add sortable buttons to the table head
+            if (sortable) {
+                const sorterFactory = (typeof customSorterFactory === "function")
+                    ? customSorterFactory
+                    : defaultSorterFactory;
+
+                let sortDirection = null;
+                if (activeSorter && activeSorter.propertyKey === propertyKey) {
+                    sortDirection = activeSorter.direction;
+                }
+
+                const iconClasses = classNames({
+                    [styles.sortIcon]: true,
+                    [faStyles.fa]: true,
+                    [faStyles["fa-sort"]]: sortDirection === null,
+                    [faStyles["fa-sort-asc"]]: sortDirection === TableSortDirection.ASC,
+                    [faStyles["fa-sort-desc"]]: sortDirection === TableSortDirection.DESC
+                });
+
+                cellContent = (
+                    <button className={styles.sortButton} onClick={() => this._handleSort(propertyKey, sorterFactory)}>
+                        <span className={iconClasses} /> {text}
+                    </button>
+                );
+            } else {
+                cellContent = text;
+            }
+
+            headerCells.push(<th key={index} style={style} className={styles.header}>{cellContent}</th>);
+
+            if (filterable) {
                 // If col has customFilter specified use it, in other cases use defaultFilter
                 // from filters.ts module
                 const filterFunction = (typeof customFilter === "function") ? customFilter : defaultFilter;
@@ -106,8 +144,8 @@ export class Table extends React.Component<TableProps, TableState> {
             headerCells.unshift(<th key={"selection-header"} className={classes}>{text}</th>);
 
             // Add empty cell to the beginning of the filters array too
-            if (filters) {
-                filterCells.unshift(<th />);
+            if (filterable) {
+                filterCells.unshift(<th key={"selection-filter-header"} />);
             }
         }
 
@@ -119,16 +157,16 @@ export class Table extends React.Component<TableProps, TableState> {
         );
     }
 
-    private _createTableBody(filteredData: TableRowDataEntry[]): JSX.Element {
+    private _createTableBody(data: TableRowDataEntry[]): JSX.Element {
         const { itemsPerPage } = this.props;
 
         let visibleRowsData;
         if (itemsPerPage) {
             const { firstRenderedItemIndex } = this.state;
             const last = firstRenderedItemIndex + itemsPerPage;
-            visibleRowsData = filteredData.slice(firstRenderedItemIndex, last);
+            visibleRowsData = data.slice(firstRenderedItemIndex, last);
         } else {
-            visibleRowsData = filteredData;
+            visibleRowsData = data;
         }
 
         const rows = visibleRowsData.map((rowData, index) => {
@@ -226,7 +264,7 @@ export class Table extends React.Component<TableProps, TableState> {
 
         const { activeFilters } = this.state;
 
-        if (!this.props.filters) {
+        if (!this.props.filterable) {
             return data;
         }
 
@@ -252,7 +290,44 @@ export class Table extends React.Component<TableProps, TableState> {
         };
 
         this.setState({
-            activeFilters: { ...currentActiveFilters, ...newActiveFilters }
+            activeFilters: {
+                ...currentActiveFilters,
+                ...newActiveFilters
+            }
+        });
+    }
+
+    private _getSortedData(data: TableRowDataEntry[]): TableRowDataEntry[] {
+        const { activeSorter } = this.state;
+
+        if (this.props.sortable && activeSorter) {
+            const newData = [...data];
+            const sorter = activeSorter.factory(activeSorter.propertyKey, activeSorter.direction);
+            newData.sort(sorter);
+            return newData;
+        }
+
+        return data;
+    }
+
+    private _handleSort(propertyKey: string, factory: TableSorterFunctionFactory) {
+        const { activeSorter } = this.state;
+
+        // Swap only direction if the new sorting occurs
+        // in a same column than last time,
+        let direction = TableSortDirection.ASC;
+        if (activeSorter && activeSorter.propertyKey === propertyKey) {
+            direction = (activeSorter.direction === TableSortDirection.ASC)
+                ? TableSortDirection.DESC
+                : TableSortDirection.ASC;
+        }
+
+        this.setState({
+            activeSorter: {
+                propertyKey,
+                direction,
+                factory
+            }
         });
     }
 
