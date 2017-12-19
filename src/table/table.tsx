@@ -183,19 +183,25 @@ export class Table extends React.Component<TableProps, TableState> {
             const { type, width, propertyKey } = header.props as TableColumnProps;
             const value = rowData[propertyKey];
 
-            let text;
+            console.log(value);
+
+            window["R"] = React;
+
+            let content;
             if (typeof value === "string") {
-                text = value;
+                content = value;
             } else if (typeof value === "number") {
-                text = `${value}`;
+                content = `${value}`;
             } else if (typeof value === "boolean") {
-                text = value ? "True" : "False";
+                content = value ? "True" : "False";
             } else if (typeof value === "function") {
-                text = value(rowData);
+                content = value(rowData);
             } else if (typeof value === "undefined") {
-                text = "";
+                content = "";
+            } else if (this._isReactComponent(value)) {
+                content = value;
             } else {
-                text = value.toString();
+                content = value.toString();
             }
 
             const style: Partial<CSSStyleDeclaration> = {
@@ -206,7 +212,7 @@ export class Table extends React.Component<TableProps, TableState> {
                 style.width = width as string;
             }
 
-            return <td key={index} className={styles.cell} style={style as any}>{text}</td>
+            return <td key={index} className={styles.cell} style={style as any}>{content}</td>
         });
 
         // If selectable mode is on add checkbox cell as a first cell of every row
@@ -227,6 +233,10 @@ export class Table extends React.Component<TableProps, TableState> {
         }
 
         return cells;
+    }
+
+    private _isReactComponent(obj: any): boolean {
+        return (typeof obj === "object") && ("type" in obj) && ("props" in obj) && ("$$typeof" in obj);
     }
 
     private _getChildrenOfType(type: string): any[] {
