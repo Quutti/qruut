@@ -1,0 +1,32 @@
+.root {
+    opacity: 1;
+    transition: opacity .2s ease;
+    position: relative;
+
+    &.fading {
+        opacity: 0;
+    }
+}
+
+.linePath {
+    stroke-width: 2px;
+    fill: transparent;
+    stroke: $line-chart-default-line-color;
+}
+
+.linePathDot {
+    r: 3.5;
+}
+
+.axisGroup {
+    & line {
+        stroke-width: 1px;
+        color: #aaa;
+        opacity: 0.1;
+        shape-rendering: crispEdges
+    }
+
+    & path {
+        stroke: transparent;
+    }
+}

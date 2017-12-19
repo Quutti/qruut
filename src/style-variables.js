@@ -43,4 +43,10 @@ styleObjects.push({
     "list-item-link-hover": selectableHoverColor
 });
 
+// Line chart
+
+styleObjects.push({
+    "line-chart-default-line-color": primaryColor
+})
+
 module.exports = Object.assign({}, ...styleObjects);
