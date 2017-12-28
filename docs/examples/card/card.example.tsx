@@ -4,7 +4,7 @@ import { Doc } from "../../components/doc";
 import { Card } from "@components/card";
 import * as helpers from "../example-helpers";
 
-import * as styleVars from "../../../src/style-variables";
+import * as styleVariables from "../../../src/style-variables";
 
 const css: { [key: string]: any } = require("../helpers.css");
 
@@ -26,6 +26,8 @@ export class CardExample extends React.Component<{}, {}> {
     }
 
     render(): JSX.Element {
+        const styleVars = styleVariables.getVariables();
+
         return (
             <div>
                 <h2>Examples</h2>

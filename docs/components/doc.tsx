@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as doc from "../doc";
 import * as _ from "lodash";
-import * as styleVars from "../../src/style-variables";
+import * as styleVariables from "../../src/style-variables";
 import { Card } from "@components/card";
 import { Table, TableColumn } from "@components/table";
 
@@ -46,6 +46,7 @@ export class Doc extends React.Component<DocProps, {}> {
 
 const createStylingTable = (name: string) => {
     const prefix = _.kebabCase(name);
+    const styleVars = styleVariables.getVariables();
 
     const rows = Object.keys(styleVars)
         .filter(v => v.indexOf(prefix) === 0)

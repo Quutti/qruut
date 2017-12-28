@@ -11,7 +11,7 @@ module.exports = {
                 // to the webpack when using webpack-dev-server.
                 const m = "./src/style-variables";
                 delete require.cache[require.resolve(m)];
-                return require(m);
+                return require(m).getVariables();
             }
         },
         'postcss-cssnext': {}

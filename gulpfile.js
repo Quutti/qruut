@@ -18,22 +18,13 @@ function compileTypescript() {
         .pipe(gulp.dest(dest, { base: "." }))
 };
 
-function copyCss() {
-    return gulp.src(getSrc("css"))
-        .pipe(gulp.dest(dest, { base: "." }));
-}
-
-function copyJs() {
-    return gulp.src(getSrc("js"))
+function copyResources() {
+    return gulp.src([...getSrc("css"), ...getSrc("js"), ...getSrc("d.ts")])
         .pipe(gulp.dest(dest, { base: "." }));
 }
 
 gulp.task("build", ["clean"], () => {
-    return merge([
-        compileTypescript(),
-        copyJs(),
-        copyCss()
-    ]);
+    return merge([compileTypescript(), copyResources()]);
 });
 
 gulp.task("clean", () => {

@@ -1,52 +1,67 @@
 const styleObjects = [];
-const primaryColor = "#4e7494";
-const separatorBorderColor = "#e0e0e0";
-const selectableHoverColor = "#becad4";
-// Globals
 
-styleObjects.push({
-    "primary-color-1": primaryColor,
-    "separator-border-color": separatorBorderColor
-})
+let variables = {
+    "primary-color-1": "#4e7494",
+    "separator-border-color": "#e0e0e0",
+    "selectable-hover-color": "#becad4"
+}
 
-styleObjects.push({
-    "font-family": "Roboto",
-    "font-size": "16px",
-    "color": "#333",
-    "shadow": "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)"
-});
+function setVariable(propName, value) {
+    variables[propName] = value;
+}
 
-// Button
+function getVariables() {
 
-styleObjects.push({
-    "button-color": primaryColor
-});
+    let styleObjects = [];
 
-// Card
+    styleObjects.push(variables);
 
-styleObjects.push({
-    "card-border-color": primaryColor,
-    "card-border-radius": "3px"
-});
+    // Globals
 
-// Table
+    styleObjects.push({
+        "font-family": "Roboto",
+        "font-size": "16px",
+        "color": "#333",
+        "shadow": "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)"
+    });
 
-styleObjects.push({
-    "table-header-row-border": primaryColor,
-    "table-row-border": separatorBorderColor
-});
+    // Button
 
-// List
+    styleObjects.push({
+        "button-color": variables["primary-color-1"]
+    });
 
-styleObjects.push({
-    "list-item-border": separatorBorderColor,
-    "list-item-link-hover": selectableHoverColor
-});
+    // Card
 
-// Line chart
+    styleObjects.push({
+        "card-border-color": variables["primary-color-1"],
+        "card-border-radius": "3px"
+    });
 
-styleObjects.push({
-    "line-chart-default-line-color": primaryColor
-})
+    // Table
 
-module.exports = Object.assign({}, ...styleObjects);
+    styleObjects.push({
+        "table-header-row-border": variables["primary-color-1"],
+        "table-row-border": variables["separator-border-color"]
+    });
+
+    // List
+
+    styleObjects.push({
+        "list-item-border": variables["separator-border-color"],
+        "list-item-link-hover": variables["selectable-hover-color"]
+    });
+
+    // Line chart
+
+    styleObjects.push({
+        "line-chart-default-line-color": variables["primary-color-1"]
+    });
+
+    return Object.assign({}, ...styleObjects);
+}
+
+module.exports = {
+    setVariable,
+    getVariables
+}

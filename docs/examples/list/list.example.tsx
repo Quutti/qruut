@@ -5,8 +5,6 @@ import { Card } from "@components/card";
 import { GridContainer, GridRow, GridCol } from "@components/grid";
 import * as helpers from "../example-helpers";
 
-import * as styleVars from "../../../src/style-variables";
-
 import { List, ListItem } from "@components/list";
 
 const css: { [key: string]: any } = require("../helpers.css");
