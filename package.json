@@ -2,7 +2,8 @@
   "name": "qruut",
   "version": "1.0.1",
   "description": "React component library for my own React projects",
-  "main": "./dist",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "scripts": {
     "build": "./node_modules/.bin/gulp build",
     "clean": "./node_modules/.bin/rimraf dist",
