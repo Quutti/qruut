@@ -17,8 +17,6 @@ function getVariables() {
 
     let styleObjects = [];
 
-    styleObjects.push(variables);
-
     // Globals
 
     styleObjects.push({
@@ -65,10 +63,12 @@ function getVariables() {
 
     styleObjects.push({
         "input-error-color": variables["error-color"],
-        "input-border-color": "#888994",
+        "input-border-color": "#c3c3c3",
         "input-padding": ".375rem .75rem",
         "input-font-size": "1rem"
     });
+
+    styleObjects.push(variables);
 
     return Object.assign({}, ...styleObjects);
 }
