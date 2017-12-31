@@ -1,7 +1,10 @@
-const styleObjects = [];
-
 let variables = {
     "primary-color-1": "#4e7494",
+
+    "success-color": "#8de057",
+    "error-color": "#e05757",
+    "warning-color": "",
+
     "separator-border-color": "#e0e0e0",
     "selectable-hover-color": "#becad4"
 }
