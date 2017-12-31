@@ -1,0 +1,40 @@
+.root {
+
+}
+
+.label {
+    position: relative;
+}
+
+.input {
+    border-radius: 0;
+    display: block;
+    width: 100%;
+    padding: $input-padding;
+    font-size: $input-font-size;
+    line-height: 1.5;
+    color: $color;
+    background-color: #fff;
+    border: 1px solid $input-border-color;
+    transition: box-shadow .2s ease, outline-color .2s ease, border-color .2s ease;
+}
+
+.hasError {
+    box-shadow: inset 0px -4px 0px 0px $input-error-color;
+    outline-color: $input-error-color;
+    border-color: $input-error-color;
+}
+
+.requiredSign {
+    display: inline-block;
+    position: relative;
+    top: -.25rem;
+    margin-right: 5px;
+    color: $input-error-color;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.feedback {
+
+}

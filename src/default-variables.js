@@ -61,6 +61,15 @@ function getVariables() {
         "line-chart-default-line-color": variables["primary-color-1"]
     });
 
+    // Input
+
+    styleObjects.push({
+        "input-error-color": variables["error-color"],
+        "input-border-color": "#888994",
+        "input-padding": ".375rem .75rem",
+        "input-font-size": "1rem"
+    });
+
     return Object.assign({}, ...styleObjects);
 }
 

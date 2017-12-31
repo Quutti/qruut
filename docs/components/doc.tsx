@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as doc from "../doc";
 import * as _ from "lodash";
-import * as styleVariables from "../../src/style-variables";
+import * as styleVariables from "../../src/default-variables";
 import { Card } from "@components/card";
 import { Table, TableColumn } from "@components/table";
 

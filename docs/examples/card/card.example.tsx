@@ -4,7 +4,7 @@ import { Doc } from "../../components/doc";
 import { Card } from "@components/card";
 import * as helpers from "../example-helpers";
 
-import * as styleVariables from "../../../src/style-variables";
+import * as styleVariables from "../../../src/default-variables";
 
 const css: { [key: string]: any } = require("../helpers.css");
 
