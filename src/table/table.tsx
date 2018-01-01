@@ -87,11 +87,13 @@ export class Table extends React.Component<TableProps, TableState> {
         let cellContent: JSX.Element | string;
 
         headers.forEach((header, index) => {
-            const { text, type, propertyKey, customFilter, customSorterFactory } = header.props as TableColumnProps;
+            const headerProps = header.props as TableColumnProps;
+            const { text, type, propertyKey, customFilter, customSorterFactory } = headerProps;
+            const { sortable: headerSortable, filterable: headerFilterable } = headerProps;
             const style = { textAlign: (type === "numeric") ? "right" : "left" };
 
             // If sortable mode is on, add sortable buttons to the table head
-            if (sortable) {
+            if (sortable && headerSortable) {
                 const sorterFactory = (typeof customSorterFactory === "function")
                     ? customSorterFactory
                     : defaultSorterFactory;
@@ -121,19 +123,23 @@ export class Table extends React.Component<TableProps, TableState> {
             headerCells.push(<th key={index} style={style} className={styles.header}>{cellContent}</th>);
 
             if (filterable) {
-                // If col has customFilter specified use it, in other cases use defaultFilter
-                // from filters.ts module
-                const filterFunction = (typeof customFilter === "function") ? customFilter : defaultFilter;
+                if (headerFilterable) {
+                    // If col has customFilter specified use it, in other cases use defaultFilter
+                    // from filters.ts module
+                    const filterFunction = (typeof customFilter === "function") ? customFilter : defaultFilter;
 
-                filterCells.push(
-                    <th key={index}>
-                        <input
-                            className={styles.filter}
-                            placeholder="Filter..."
-                            onKeyUp={(evt) => this._handleFilterInput(evt, propertyKey, filterFunction)}
-                        />
-                    </th>
-                );
+                    filterCells.push(
+                        <th key={index}>
+                            <input
+                                className={styles.filter}
+                                placeholder="Filter..."
+                                onKeyUp={(evt) => this._handleFilterInput(evt, propertyKey, filterFunction)}
+                            />
+                        </th>
+                    );
+                } else {
+                    filterCells.push(<th key={index} />);
+                }
             }
         });
 

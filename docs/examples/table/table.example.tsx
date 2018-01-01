@@ -33,7 +33,7 @@ export class TableExample extends React.Component<{}, {}> {
                     <Table itemsPerPage={10} data={data} selectable filterable sortable uniqueIdKey="id">
                         <TableColumn text="Test" propertyKey="v1" />
                         <TableColumn text="Numeric value" propertyKey="v2" type="numeric" />
-                        <TableColumn text="Test column 3" propertyKey="v3" />
+                        <TableColumn text="Unsortable and unfilterable" filterable={false} sortable={false} propertyKey="v3" />
                     </Table>
                 </Card>
             </div>
