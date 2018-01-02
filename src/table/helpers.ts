@@ -1,3 +1,7 @@
+
+
+export type TableCustomValueFunction = (propertyValue: any) => string | JSX.Element;
+
 /* Filters */
 
 export type TableFilterFunction = (propertyValue: string, text: string) => boolean;

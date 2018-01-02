@@ -186,15 +186,13 @@ export class Table extends React.Component<TableProps, TableState> {
         const { selectable, uniqueIdKey } = this.props;
 
         const cells = this._getChildrenOfType("TableColumn").map((header, index) => {
-            const { type, width, propertyKey } = header.props as TableColumnProps;
+            const { type, width, propertyKey, customValue } = header.props as TableColumnProps;
             const value = rowData[propertyKey];
 
-            console.log(value);
-
-            window["R"] = React;
-
             let content;
-            if (typeof value === "string") {
+            if (typeof customValue === "function") {
+                content = customValue(value);
+            } else if (typeof value === "string") {
                 content = value;
             } else if (typeof value === "number") {
                 content = `${value}`;

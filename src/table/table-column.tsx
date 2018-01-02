@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { TableFilterFunction, TableSorterFunctionFactory } from "./helpers";
+import { TableFilterFunction, TableSorterFunctionFactory, TableCustomValueFunction } from "./helpers";
 
 export type TableColumnType = "text" | "numeric";
 
@@ -11,6 +11,7 @@ export interface TableColumnProps {
     sortable?: boolean;
     width?: number | string;
     type?: TableColumnType;
+    customValue?: TableCustomValueFunction;
     customFilter?: TableFilterFunction;
     customSorterFactory?: TableSorterFunctionFactory;
 }
