@@ -37,6 +37,12 @@ export class LineChartExample extends React.Component<{}, {}> {
                             <Card heading="Line chart example" className={css.mb3}>
                                 <LineChart lines={this._lines} />
                             </Card>
+
+                            <Card heading="Line chart example custom tick format and count" className={css.mb3}>
+                                <LineChart lines={this._lines} xTickCount={2} xTickFormat={(date: Date, index: number) => {
+                                    return index + "";
+                                }} />
+                            </Card>
                         </GridCol>
 
                     </GridRow>

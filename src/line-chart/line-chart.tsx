@@ -15,11 +15,15 @@ export interface LineChartPoint {
     value: number;
 }
 
+export type LineCustomChartTickFormatFunction = (date: Date, index: number) => string;
+
 export interface LineChartProps {
     lines: LineChartLine[];
     curve?: d3.CurveFactory;
     height?: number;
     yTickCount?: number;
+    xTickFormat?: LineCustomChartTickFormatFunction;
+    xTickCount?: number;
     animationDuration?: number;
     showDots?: boolean;
 }
@@ -52,6 +56,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
         height: 250,
         curve: d3.curveLinear,
         yTickCount: 5,
+        xTickCount: 4,
         showDots: true,
         animationDuration: 750
     }
@@ -130,7 +135,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
         this._axes.x = this._mainG.append("g")
             .attr("class", styles.axisGroup)
             .attr("transform", `translate(${MARGIN}, ${height})`)
-            .call(d3.axisBottom(this._scales.x).ticks(4));
+            .call(this._getAxisBottom());
 
         this._axes.y = this._mainG.append("g")
             .attr("class", styles.axisGroup)
@@ -146,7 +151,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
         this._scales.x.domain(domains.x);
         this._scales.y.domain(domains.y);
 
-        this._axes.x.transition().call(d3.axisBottom(this._scales.x).ticks(4) as any);
+        this._axes.x.transition().call(this._getAxisBottom() as any);
         this._axes.y.transition().call(this._getAxisLeft() as any);
 
         this._updatePaths(animate);
@@ -347,7 +352,19 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
             .tickSize(-this._containerRef.offsetWidth + 2 * MARGIN);
     }
 
-    private _shortenValue(value: number): string {
+    private _getAxisBottom(): d3.Axis<number | { valueOf(): number }> {
+        const { xTickFormat, xTickCount } = this.props;
+        const axis = d3.axisBottom(this._scales.x)
+            .ticks(xTickCount);
+
+        if (typeof xTickFormat === "function") {
+            return axis.tickFormat(xTickFormat);
+        } else {
+            return axis;
+        }
+    }
+
+    private _shortenValue(value: number, index: number): string {
         return (value >= 1000) ? `${Math.ceil(value / 1000)}k` : `${value}`;
     }
 
