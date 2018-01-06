@@ -348,7 +348,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     }
 
     private _shortenValue(value: number): string {
-        return (value > 1000) ? `${Math.ceil(value / 1000)}k` : `${value}`;
+        return (value >= 1000) ? `${Math.ceil(value / 1000)}k` : `${value}`;
     }
 
 }
