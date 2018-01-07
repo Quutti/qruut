@@ -1,29 +1,41 @@
 import * as React from "react";
 import * as d3 from "d3";
 import * as classNames from "classnames";
+import * as objectAssign from "object-assign";
 
 const styles: any = require("./line-chart.css");
 
-export interface LineChartLine {
-    data: LineChartPoint[];
+export interface LineChartLine<XType> {
+    data: LineChartPoint<XType>[];
     color?: string;
     curve?: d3.CurveFactory;
 }
 
-export interface LineChartPoint {
-    date: Date;
-    value: number;
+export interface LineChartPoint<XType> {
+    xValue: XType;
+    yValue: number;
 }
 
-export type LineCustomChartTickFormatFunction = (date: Date, index: number) => string;
+export type LineChartScaleType = "time" | "linear";
+
+export type LineCustomChartTickFormatFunction<T> = (xValue: T, index: number) => string;
+
+export interface LineChartXAxisOptions {
+    tickCount?: number;
+    tickFormat?: LineCustomChartTickFormatFunction<any>;
+    scale?: LineChartScaleType;
+}
+
+export interface LineChartYAxisOptions {
+    tickCount?: number;
+}
 
 export interface LineChartProps {
-    lines: LineChartLine[];
+    lines: LineChartLine<any>[];
     curve?: d3.CurveFactory;
     height?: number;
-    yTickCount?: number;
-    xTickFormat?: LineCustomChartTickFormatFunction;
-    xTickCount?: number;
+    xAxis?: LineChartXAxisOptions;
+    yAxis?: LineChartYAxisOptions;
     animationDuration?: number;
     showDots?: boolean;
 }
@@ -45,6 +57,16 @@ interface XY<t1, t2> {
 const MARGIN = 30;
 const CHART_PADDING = 5;
 
+const xAxisPropDefaults: LineChartXAxisOptions = {
+    tickCount: 4,
+    tickFormat: null,
+    scale: "time"
+}
+
+const yAxisPropDefaults = {
+    tickCount: 5
+}
+
 type D3SelectionElement = d3.Selection<d3.BaseType, any, any, any>;
 type D3TransitionElement = d3.Transition<d3.BaseType, any, any, any>;
 
@@ -55,8 +77,8 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     static defaultProps: Partial<LineChartProps> = {
         height: 250,
         curve: d3.curveLinear,
-        yTickCount: 5,
-        xTickCount: 4,
+        yAxis: yAxisPropDefaults,
+        xAxis: xAxisPropDefaults,
         showDots: true,
         animationDuration: 750
     }
@@ -69,7 +91,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     private _mainG: D3SelectionElement = null;
     private _pathsG: D3SelectionElement = null;
     private _lineGs: D3SelectionElement[] = [];
-    private _scales: XY<d3.ScaleTime<number, number>, d3.ScaleLinear<number, number>> = { x: null, y: null };
+    private _scales: XY<any, d3.ScaleLinear<number, number>> = { x: null, y: null };
     private _axes: XY<D3SelectionElement, D3SelectionElement> = { x: null, y: null };
 
     constructor(props) {
@@ -111,6 +133,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     }
 
     private _createChart() {
+        const { scale: xScaleType } = this._getXAxisProps();
         const self = this;
         const containerOffsetWidth = this._containerRef.offsetWidth;
 
@@ -129,7 +152,12 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
         const width = containerOffsetWidth - MARGIN * 2;
         const height = this._getInnerHeight();
 
-        this._scales.x = d3.scaleTime().domain(domains.x).rangeRound([CHART_PADDING, width - CHART_PADDING]);
+        if (xScaleType === "time") {
+            this._scales.x = d3.scaleTime().domain(domains.x).rangeRound([CHART_PADDING, width - CHART_PADDING]);
+        } else {
+            this._scales.x = d3.scaleLinear().domain(domains.x).range([CHART_PADDING, width - CHART_PADDING]);
+        }
+
         this._scales.y = d3.scaleLinear().domain(domains.y).rangeRound([height, 0]);
 
         this._axes.x = this._mainG.append("g")
@@ -209,9 +237,9 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
 
         const setCXCY = (elems: D3Element, fromBottom: boolean = false): D3Element => {
             return elems
-                .attr("cx", (d: LineChartPoint, index) => this._scales.x(d.date))
-                .attr("cy", (d: LineChartPoint, index) => {
-                    return (fromBottom) ? this._getInnerHeight() : this._scales.y(d.value);
+                .attr("cx", (d: LineChartPoint<any>, index) => this._scales.x(d.xValue))
+                .attr("cy", (d: LineChartPoint<any>, index) => {
+                    return (fromBottom) ? this._getInnerHeight() : this._scales.y(d.yValue);
                 });
         }
 
@@ -273,20 +301,24 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
 
     private _getLine(fixedYPos?: number): d3.Line<[number, number]> {
         const { curve } = this.props;
-
+        const { scale } = this._getXAxisProps();
         return d3.line()
             .curve(curve)
             .x((d: any) => {
-                const data = d as LineChartPoint;
-                return this._scales.x(data.date.valueOf());
+                const data = d as LineChartPoint<any>;
+                if (scale === "time" && data.xValue instanceof Date) {
+                    return this._scales.x(data.xValue.valueOf());
+                } else {
+                    return this._scales.x(data.xValue);
+                }
             })
             .y((d: any) => {
                 if (fixedYPos !== undefined) {
                     return fixedYPos
                 }
 
-                const data = d as LineChartPoint;
-                return this._scales.y(data.value);
+                const data = d as LineChartPoint<any>;
+                return this._scales.y(data.yValue);
             });
     }
 
@@ -295,77 +327,100 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     }
 
     private _getDomains(): XY<number[], number[]> {
-        const dateBoundaries = this._getDateBoundaries();
-        const x = [
-            dateBoundaries.min.valueOf(),
-            dateBoundaries.max.valueOf()
-        ];
-
+        const { min, max } = this._getXBoundaries();
+        const x = [min, max];
         const maxPoints = this._getMaxValue() * 1.1;
         const y = [0, maxPoints];
 
         return { x, y };
     }
 
-    private _getDateBoundaries(): MinMax<Date> {
-        const dates: Date[] = [];
-        const dateMsMap: number[] = [];
+    private _getXBoundaries(): MinMax<number> {
+        const { scale } = this._getXAxisProps();
+        const values: number[] = [];
+
+        if (scale === "linear") {
+
+            const mins = [];
+            const maxs = [];
+
+            this.props.lines.forEach(line => {
+                const xValues = line.data.map(d => d.xValue);
+                mins.push(Math.min(...xValues));
+                maxs.push(Math.max(...xValues));
+            });
+
+            return {
+                min: Math.min(...mins),
+                max: Math.max(...maxs)
+            }
+        }
 
         this.props.lines.forEach(line => {
             line.data.forEach(dataset => {
-                const date = new Date(dataset.date.valueOf());
-                date.setHours(0, 0, 0, 0);
+                let value;
 
-                const ms = date.valueOf();
-                if (dateMsMap.indexOf(ms) === -1) {
-                    dates.push(date);
-                    dateMsMap.push(ms);
+                if (dataset.xValue instanceof Date) {
+                    const date = new Date(dataset.xValue.valueOf());
+                    date.setHours(0, 0, 0, 0);
+                    value = date.valueOf();
+                } else {
+                    value = dataset.xValue;
                 }
+
+                values.push(value);
             });
         });
 
-        dates.sort((d1, d2) => d1.valueOf() - d2.valueOf());
+        return {
+            min: Math.min(...values),
+            max: Math.max(...values)
+        }
 
-        const first = dates[0];
-        const last = dates[dates.length - 1];
-        const min = first ? new Date(dates[0].valueOf()) : new Date();
-        const max = last ? new Date(dates[dates.length - 1].valueOf()) : new Date();
-
-        return { min, max };
     }
 
     private _getMaxValue(): number {
         let max = 0;
         this.props.lines.forEach(line => {
-            line.data.forEach(dataset => max = Math.max(dataset.value, max))
+            line.data.forEach(dataset => max = Math.max(dataset.yValue, max))
         });
         return max;
     }
 
     private _getAxisLeft(): d3.Axis<number | { valueOf(): number; }> {
-        const { yTickCount } = this.props;
+        const { tickCount } = this._getYAxisProps();
 
         return d3.axisLeft(this._scales.y)
             .tickFormat(this._shortenValue as any)
             .tickPadding(7)
-            .ticks(yTickCount)
+            .ticks(tickCount)
             .tickSize(-this._containerRef.offsetWidth + 2 * MARGIN);
     }
 
     private _getAxisBottom(): d3.Axis<number | { valueOf(): number }> {
-        const { xTickFormat, xTickCount } = this.props;
-        const axis = d3.axisBottom(this._scales.x)
-            .ticks(xTickCount);
+        const { tickCount, tickFormat } = this._getXAxisProps();
+        let axis = d3.axisBottom(this._scales.x)
+            .ticks(tickCount);
 
-        if (typeof xTickFormat === "function") {
-            return axis.tickFormat(xTickFormat);
-        } else {
-            return axis;
+        if (typeof tickFormat === "function") {
+            axis = axis.tickFormat(tickFormat);
         }
+
+        return axis as d3.Axis<number | { valueOf(): number }>;
     }
 
     private _shortenValue(value: number, index: number): string {
         return (value >= 1000) ? `${Math.ceil(value / 1000)}k` : `${value}`;
+    }
+
+    private _getXAxisProps(): LineChartXAxisOptions {
+        const { xAxis } = this.props;
+        return objectAssign({}, xAxisPropDefaults, xAxis);
+    }
+
+    private _getYAxisProps(): LineChartYAxisOptions {
+        const { yAxis } = this.props;
+        return objectAssign({}, yAxisPropDefaults, yAxis);
     }
 
 }

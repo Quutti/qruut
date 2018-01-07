@@ -5,7 +5,7 @@ import { Card } from "@components/card";
 import { GridContainer, GridRow, GridCol } from "@components/grid";
 import * as helpers from "../example-helpers";
 
-import { LineChart, LineChartLine } from "@components/line-chart";
+import { LineChart, LineChartLine, LineCustomChartTickFormatFunction } from "@components/line-chart";
 
 const css: { [key: string]: any } = require("../helpers.css");
 
@@ -20,13 +20,21 @@ export class LineChartExample extends React.Component<{}, {}> {
         properties: {}
     }
 
-    private _lines: LineChartLine[] = [];
+    private _lines1: LineChartLine<Date>[] = [];
+    private _lines2: LineChartLine<number>[] = [];
 
     constructor(props) {
         super(props);
     }
 
     public render(): JSX.Element {
+
+        const tickCount = (this._lines2[0]) ? this._lines2[0].data.length : 0;
+        const tickFormat: LineCustomChartTickFormatFunction<number> = (val: number, index: number) => {
+            if (index === 0) { return "1" };
+            if (index === tickCount - 1) { return "Last" };
+            return "";
+        }
         return (
             <div>
                 <h2>Examples</h2>
@@ -34,15 +42,15 @@ export class LineChartExample extends React.Component<{}, {}> {
                     <GridRow>
 
                         <GridCol xl={12} lg={12} md={12} sm={12}>
+
                             <Card heading="Line chart example" className={css.mb3}>
-                                <LineChart lines={this._lines} />
+                                <LineChart lines={this._lines1} />
                             </Card>
 
-                            <Card heading="Line chart example custom tick format and count" className={css.mb3}>
-                                <LineChart lines={this._lines} xTickCount={2} xTickFormat={(date: Date, index: number) => {
-                                    return index + "";
-                                }} />
+                            <Card heading="Line chart example 2" className={css.mb3}>
+                                <LineChart lines={this._lines2} xAxis={{ tickCount, tickFormat, scale: "linear" }} />
                             </Card>
+
                         </GridCol>
 
                     </GridRow>
@@ -58,7 +66,13 @@ export class LineChartExample extends React.Component<{}, {}> {
     }
 
     private _randomLines() {
-        this._lines = [{
+        this._randomLines1();
+        this._randomLines2();
+        this.forceUpdate();
+    }
+
+    private _randomLines1() {
+        this._lines1 = [{
             color: "red",
             data: []
         }, {
@@ -75,15 +89,37 @@ export class LineChartExample extends React.Component<{}, {}> {
             date.setDate(date.getDate() + i);
             date.setHours(0, 0, 0, 0);
 
-            this._lines.forEach(o => {
+            this._lines1.forEach(o => {
                 o.data.push({
-                    date: new Date(date.valueOf()),
-                    value: randomValue()
+                    xValue: new Date(date.valueOf()),
+                    yValue: randomValue()
                 })
             });
         }
 
-        this.forceUpdate();
+    }
+
+    private _randomLines2() {
+        this._lines2 = [{
+            color: "red",
+            data: []
+        }, {
+            color: "green",
+            data: []
+        }, {
+            color: "blue",
+            data: []
+        }];
+        const startDate = new Date();
+
+        for (let i = 0; i < 15; i++) {
+            this._lines2.forEach(o => {
+                o.data.push({
+                    xValue: i,
+                    yValue: randomValue()
+                })
+            });
+        }
     }
 
 }
