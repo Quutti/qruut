@@ -20,14 +20,21 @@ export type LineChartScaleType = "time" | "linear";
 
 export type LineCustomChartTickFormatFunction<T> = (xValue: T, index: number) => string;
 
-export interface LineChartXAxisOptions {
+export interface LineChartAxisOptionsBase {
+    tickCount?: number;
+}
+
+export interface LineChartXAxisOptions extends LineChartAxisOptionsBase {
     tickCount?: number;
     tickFormat?: LineCustomChartTickFormatFunction<any>;
     scale?: LineChartScaleType;
 }
 
-export interface LineChartYAxisOptions {
-    tickCount?: number;
+export interface LineChartYAxisOptions extends LineChartAxisOptionsBase { }
+
+export interface LineChartDotsOptions {
+    radius?: number;
+    show?: boolean;
 }
 
 export interface LineChartProps {
@@ -37,7 +44,7 @@ export interface LineChartProps {
     xAxis?: LineChartXAxisOptions;
     yAxis?: LineChartYAxisOptions;
     animationDuration?: number;
-    showDots?: boolean;
+    dots?: LineChartDotsOptions;
 }
 
 export interface LineChartState {
@@ -57,14 +64,25 @@ interface XY<t1, t2> {
 const MARGIN = 30;
 const CHART_PADDING = 5;
 
-const xAxisPropDefaults: LineChartXAxisOptions = {
-    tickCount: 4,
-    tickFormat: null,
-    scale: "time"
-}
+type PropDefaultTypes = "xAxis" | "yAxis" | "dots";
 
-const yAxisPropDefaults = {
-    tickCount: 5
+const PROP_DEFAULTS: { [key: string]: any } = {
+
+    "xAxis": {
+        tickCount: 4,
+        tickFormat: null,
+        scale: "time"
+    } as LineChartXAxisOptions,
+
+    "yAxis": {
+        tickCount: 5
+    } as LineChartYAxisOptions,
+
+    "dots": {
+        radius: 3.5,
+        show: true
+    } as LineChartDotsOptions
+
 }
 
 type D3SelectionElement = d3.Selection<d3.BaseType, any, any, any>;
@@ -77,9 +95,9 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     static defaultProps: Partial<LineChartProps> = {
         height: 250,
         curve: d3.curveLinear,
-        yAxis: yAxisPropDefaults,
-        xAxis: xAxisPropDefaults,
-        showDots: true,
+        yAxis: PROP_DEFAULTS["yAxis"],
+        xAxis: PROP_DEFAULTS["xAxis"],
+        dots: PROP_DEFAULTS["dots"],
         animationDuration: 750
     }
 
@@ -133,7 +151,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     }
 
     private _createChart() {
-        const { scale: xScaleType } = this._getXAxisProps();
+        const { scale: xScaleType } = this._getProps("xAxis") as LineChartXAxisOptions;
         const self = this;
         const containerOffsetWidth = this._containerRef.offsetWidth;
 
@@ -172,8 +190,8 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     }
 
     private _updateChart(animate: boolean = true) {
-
-        const { showDots, animationDuration } = this.props;
+        const dots = this._getProps("dots") as LineChartDotsOptions;
+        const { animationDuration } = this.props;
 
         const domains = this._getDomains();
         this._scales.x.domain(domains.x);
@@ -183,7 +201,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
         this._axes.y.transition().call(this._getAxisLeft() as any);
 
         this._updatePaths(animate);
-        if (showDots) {
+        if (dots.show) {
             this._updateDots(animate);
         }
     }
@@ -234,9 +252,10 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     }
 
     private _updateDots(animate: boolean) {
-
+        const { radius } = this._getProps("dots") as LineChartDotsOptions;
         const setCXCY = (elems: D3Element, fromBottom: boolean = false): D3Element => {
             return elems
+                .attr("r", radius)
                 .attr("cx", (d: LineChartPoint<any>, index) => this._scales.x(d.xValue))
                 .attr("cy", (d: LineChartPoint<any>, index) => {
                     return (fromBottom) ? this._getInnerHeight() : this._scales.y(d.yValue);
@@ -301,7 +320,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
 
     private _getLine(fixedYPos?: number): d3.Line<[number, number]> {
         const { curve } = this.props;
-        const { scale } = this._getXAxisProps();
+        const { scale } = this._getProps("xAxis") as LineChartXAxisOptions;
         return d3.line()
             .curve(curve)
             .x((d: any) => {
@@ -336,7 +355,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     }
 
     private _getXBoundaries(): MinMax<number> {
-        const { scale } = this._getXAxisProps();
+        const { scale } = this._getProps("xAxis") as LineChartXAxisOptions;
         const values: number[] = [];
 
         if (scale === "linear") {
@@ -388,7 +407,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     }
 
     private _getAxisLeft(): d3.Axis<number | { valueOf(): number; }> {
-        const { tickCount } = this._getYAxisProps();
+        const { tickCount } = this._getProps("yAxis") as LineChartYAxisOptions;
 
         return d3.axisLeft(this._scales.y)
             .tickFormat(this._shortenValue as any)
@@ -398,7 +417,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     }
 
     private _getAxisBottom(): d3.Axis<number | { valueOf(): number }> {
-        const { tickCount, tickFormat } = this._getXAxisProps();
+        const { tickCount, tickFormat } = this._getProps("xAxis") as LineChartXAxisOptions;
         let axis = d3.axisBottom(this._scales.x)
             .ticks(tickCount);
 
@@ -413,14 +432,12 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
         return (value >= 1000) ? `${Math.ceil(value / 1000)}k` : `${value}`;
     }
 
-    private _getXAxisProps(): LineChartXAxisOptions {
-        const { xAxis } = this.props;
-        return objectAssign({}, xAxisPropDefaults, xAxis);
-    }
+    private _getProps(prop: PropDefaultTypes): any {
+        if (!(prop in PROP_DEFAULTS)) {
+            return {};
+        }
 
-    private _getYAxisProps(): LineChartYAxisOptions {
-        const { yAxis } = this.props;
-        return objectAssign({}, yAxisPropDefaults, yAxis);
+        return objectAssign({}, PROP_DEFAULTS[prop], this.props[prop]);
     }
 
 }

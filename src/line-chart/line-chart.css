@@ -14,9 +14,7 @@
     stroke: $line-chart-default-line-color;
 }
 
-.linePathDot {
-    r: 3.5;
-}
+.linePathDot {}
 
 .axisGroup {
     & line {
