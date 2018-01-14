@@ -188,10 +188,14 @@ export class Table extends React.Component<TableProps, TableState> {
         const cells = this._getChildrenOfType("TableColumn").map((header, index) => {
             const { type, width, propertyKey, customValue } = header.props as TableColumnProps;
             const value = rowData[propertyKey];
+            const isReactElement = this._isReactComponent(value);
+            const isReactElementArray = Array.isArray(value) && this._isReactComponent(value[0]);
 
             let content;
             if (typeof customValue === "function") {
                 content = customValue(value);
+            } else if (isReactElement || isReactElementArray) {
+                content = value;
             } else if (typeof value === "string") {
                 content = value;
             } else if (typeof value === "number") {
@@ -202,8 +206,6 @@ export class Table extends React.Component<TableProps, TableState> {
                 content = value(rowData);
             } else if (typeof value === "undefined") {
                 content = "";
-            } else if (this._isReactComponent(value)) {
-                content = value;
             } else {
                 content = value.toString();
             }

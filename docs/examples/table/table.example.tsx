@@ -22,7 +22,7 @@ export class TableExample extends React.Component<{}, {}> {
                 id: `id-${i}`,
                 v1: `Some value of item ${i}`,
                 v2: "15125",
-                v3: (<span style={{ color: "red" }}>Red text inside JSX Element!</span>)
+                v3: [<span style={{ color: "red" }}>Red text inside JSX Element!</span>, <span>And another</span>]
             });
 
             data2.push({
