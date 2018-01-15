@@ -1,0 +1,13 @@
+.root {
+    position: absolute;
+    max-width: $popover-max-width;
+    min-width: $popover-min-width;
+    background-color: #fff;
+    box-shadow: $shadow;
+    padding: $popover-padding;
+    display: none;
+}
+
+.visible {
+    display: block;
+}

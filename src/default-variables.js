@@ -68,6 +68,14 @@ function getVariables() {
         "input-font-size": "1rem"
     });
 
+    // Popover
+
+    styleObjects.push({
+        "popover-max-width": "120px",
+        "popover-min-width": "320px",
+        "popover-padding": ".75rem"
+    });
+
     styleObjects.push(variables);
 
     return Object.assign({}, ...styleObjects);
