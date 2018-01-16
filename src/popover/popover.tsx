@@ -22,67 +22,69 @@ export interface PopoverProps {
 
 export interface PopoverState {
     position: PopoverPosition;
+    animateInProgress: boolean;
 }
 
 export class Popover extends React.Component<PopoverProps, PopoverState> {
 
     private _containerElement: HTMLDivElement = null;
-    private _eventBinded: boolean = false;
 
     constructor(props) {
         super(props);
 
         this.state = {
-            position: null
+            position: null,
+            animateInProgress: false
         }
 
         this._handleClickOutside = this._handleClickOutside.bind(this);
     }
 
     public render() {
-        const classes = classNames({
-            [styles.root]: true,
+
+        const classes = classNames(styles.root, {
             [styles.visible]: this.props.visible
         });
 
         return (
-            <div className={classes} style={this.state.position} ref={(elm) => this._containerElement = elm}>
+            <div
+                className={classes}
+                style={this.state.position}
+                ref={(elm) => this._containerElement = elm}
+                onTransitionEnd={() => this.setState({ animateInProgress: false })}
+            >
                 {this.props.children}
             </div>
-        )
+        );
     }
 
     public componentWillReceiveProps(props: PopoverProps) {
         if (props.visible && !this.props.visible) {
             this._prepareVisible();
-
-            if (!this._eventBinded) {
-                document.addEventListener('click', this._handleClickOutside);
-            }
+            this.setState({ animateInProgress: true });
         }
     }
 
     public componentDidMount() {
+        document.addEventListener('click', this._handleClickOutside);
         this._prepareVisible();
     }
 
     public componentWillUnmount() {
-        if (this._eventBinded) {
-            document.removeEventListener('click', this._handleClickOutside);
-        }
+        document.removeEventListener('click', this._handleClickOutside);
     }
 
     private _prepareVisible() {
         this._setContainerPosition();
     }
 
-    private _isPositionElement(targetElement: HTMLElement) {
-        const { positionElement } = this.props;
-        return (positionElement && positionElement === targetElement);
-    }
-
     private _handleClickOutside(evt) {
-        if (this.props.visible && this._containerElement && (this._containerElement.contains(evt.target) || this._containerElement === evt.target || this._isPositionElement(evt.target))) {
+
+        if (this.state.animateInProgress) {
+            return;
+        }
+
+        if (this._containerElement && (this._containerElement.contains(evt.target) || this._containerElement === evt.target)) {
             return;
         }
 
