@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as classNames from 'classnames';
+import { appendFile } from "fs";
 
 const styles: { [key: string]: any } = require('./popover.css');
 
@@ -41,21 +42,23 @@ export class Popover extends React.Component<PopoverProps, PopoverState> {
     }
 
     public render() {
-
+        const { visible, children } = this.props;
         const classes = classNames(styles.root, {
-            [styles.visible]: this.props.visible
+            [styles.visible]: visible
         });
 
-        return (
+        const content = (
             <div
                 className={classes}
                 style={this.state.position}
                 ref={(elm) => this._containerElement = elm}
                 onTransitionEnd={() => this.setState({ animateInProgress: false })}
             >
-                {this.props.children}
+                {children}
             </div>
         );
+
+        return ReactDOM.createPortal(content, document.body);
     }
 
     public componentWillReceiveProps(props: PopoverProps) {
@@ -67,7 +70,6 @@ export class Popover extends React.Component<PopoverProps, PopoverState> {
 
     public componentDidMount() {
         document.addEventListener('click', this._handleClickOutside);
-        this._prepareVisible();
     }
 
     public componentWillUnmount() {
@@ -119,14 +121,16 @@ export class Popover extends React.Component<PopoverProps, PopoverState> {
                 return;
             }
 
-            const offsetLeft = htmlElement.offsetLeft;
+            const offset = getElementOffset(htmlElement);
             const posElmHeight = htmlElement.clientHeight;
-            const posElmPosition = htmlElement.getBoundingClientRect();
 
             // Dont allow container position overflow viewport horizontally
-            const overflow = document.body.clientWidth - posElmPosition.left - this._containerElement.clientWidth;
-            const left = (overflow < 0) ? offsetLeft + overflow - CONTAINER_SPACER : offsetLeft;
-            const top = htmlElement.offsetTop + posElmHeight + CONTAINER_SPACER;
+            const overflow = document.body.clientWidth - offset.left - this._containerElement.clientWidth;
+            const left = (overflow < 0)
+                ? offset.left + overflow - CONTAINER_SPACER
+                : offset.left;
+
+            const top = offset.top + posElmHeight + CONTAINER_SPACER;
 
             positionObj = { top, left };
         }
@@ -137,4 +141,15 @@ export class Popover extends React.Component<PopoverProps, PopoverState> {
 
 function isLikeReactComponent(component: any) {
     return component && component.render && component.forceUpdate && component.props && component.setState;
+}
+
+function getElementOffset(element: HTMLElement): PopoverPosition {
+    let left = 0;
+    let top = 0;
+    while (element) {
+        left += element.offsetLeft - element.scrollLeft;
+        top += element.offsetTop - element.scrollTop;
+        element = element.offsetParent as HTMLElement;
+    }
+    return { left, top };
 }
