@@ -1,0 +1,67 @@
+.root {
+
+}
+
+.table {
+    width: 100%;
+}
+
+.dayRoot {
+    width: calc(100% / 7);
+}
+
+.dayName,
+.dayInner {
+    text-align: center;
+}
+
+.dayName {
+    font-size: .8rem;
+    padding: .4rem;
+}
+
+.dayButton {
+    padding: .6rem .4rem;
+    background-color: transparent;
+    border: 0px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.daySelected {
+    background-color: $primary-color-1;
+    border-radius: 50%;
+    color: #fff;
+}
+
+.dayToday {
+
+}
+
+.dayFade {
+    color: #ccc;
+}
+
+.label {
+    text-align: center;
+    line-height: 175%;
+    font-size: 1.1rem;
+}
+
+.prevButtonContainer {
+    text-align: left;
+    padding-left: 10px;
+}
+
+.nextButtonContainer {
+    text-align: right;
+    padding-right: 10px;
+}
+
+.navigationButton {
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    color: $primary-color-1;
+    font-size: 1.4rem;
+}

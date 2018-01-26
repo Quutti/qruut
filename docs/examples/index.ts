@@ -6,3 +6,4 @@ export * from "./list/list.example";
 export * from "./line-chart/line-chart.example";
 export * from "./input/input.example";
 export * from "./popover/popover.example";
+export * from "./calendar/calendar.example";

@@ -17,6 +17,29 @@ export const getMonthDayCount = (year: number, month: number): number => {
     return [31, (isLeapYear ? 29 : 28), 31, 30, 31, 31, 30, 31, 30, 31, 30, 31][month - 1];
 }
 
+export const getDayShortNames = (): string[] => {
+    return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+}
+
+export const dateInMs = (date: Date): number => {
+    const d = new Date(date.valueOf());
+    d.setHours(0, 0, 0, 0);
+    return d.valueOf();
+}
+
+export const isCurrentDate = (date: Date): boolean => {
+    return dateInMs(date) === dateInMs(new Date());
+}
+
+export const getDayNumberStartingFromMonday = (date: Date) => {
+    const newDayNumber = date.getDay() - 1;
+    return (newDayNumber < 0) ? 6 : newDayNumber;
+}
+
+export const datesMatch = (date1: Date, date2: Date): boolean => {
+    return dateInMs(date1) === dateInMs(date2);
+}
+
 /* Validation */
 
 export const isValidJsonDate = (dateString: string): boolean => {
