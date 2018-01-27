@@ -5,18 +5,18 @@ const bootstrapGrid: { [key: string]: any } = require("bootstrap/dist/css/bootst
 
 export interface GridContainerProps {
     fixed?: boolean;
+    className?: string;
 }
 
-export class GridContainer extends React.Component<GridContainerProps, {}> {
+export const GridContainer: React.SFC<GridContainerProps> = (props) => {
+    const classes = classNames(props.className, {
+        [bootstrapGrid.container]: props.fixed,
+        [bootstrapGrid["container-fluid"]]: props.fixed
+    });
 
-    public render(): JSX.Element {
-        const { fixed } = this.props;
-        const classes = classNames({
-            [bootstrapGrid.container]: fixed,
-            [bootstrapGrid["container-fluid"]]: !fixed
-        });
+    return <div className={classes}>{props.children}</div>;
+}
 
-        return <div className={classes}>{this.props.children}</div>
-    }
-
+GridContainer.defaultProps = {
+    className: ""
 }

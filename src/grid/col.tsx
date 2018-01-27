@@ -12,31 +12,27 @@ export interface GridColProps {
     className?: string;
 }
 
-export class GridCol extends React.Component<GridColProps, {}> {
+export const GridCol: React.SFC<GridColProps> = (props) => {
+    const { xl, lg, md, sm, xs, className, children } = props;
 
-    static defaultProps: Partial<GridColProps> = {
-        xl: 12,
-        lg: 12,
-        md: 12,
-        sm: 12,
-        xs: 12,
-        className: ""
-    }
+    const classes = classNames(
+        bootstrapGrid["col"],
+        bootstrapGrid[`col-${xs}`],
+        bootstrapGrid[`col-sm-${sm}`],
+        bootstrapGrid[`col-md-${md}`],
+        bootstrapGrid[`col-lg-${lg}`],
+        bootstrapGrid[`col-xl-${xl}`],
+        className
+    );
 
-    public render(): JSX.Element {
-        const { xl, lg, md, sm, xs, className } = this.props;
+    return <div className={classes}>{children}</div>;
+}
 
-        const classes = [
-            bootstrapGrid["col"],
-            bootstrapGrid[`col-${xs}`],
-            bootstrapGrid[`col-sm-${sm}`],
-            bootstrapGrid[`col-md-${md}`],
-            bootstrapGrid[`col-lg-${lg}`],
-            bootstrapGrid[`col-xl-${xl}`],
-            ...className.split(" ")
-        ].join(" ");
-
-        return <div className={classes}>{this.props.children}</div>
-    }
-
+GridCol.defaultProps = {
+    xl: 12,
+    lg: 12,
+    md: 12,
+    sm: 12,
+    xs: 12,
+    className: ""
 }
