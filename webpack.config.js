@@ -31,7 +31,7 @@ module.exports = function getWebpackConfigs() {
             use: [{
                 loader: "ts-loader",
                 options: {
-                    configFile: path.resolve(__dirname, "docs", "tsconfig.json")
+                    configFile: path.resolve(__dirname, "tsconfig.json")
                 }
             }]
         }, {

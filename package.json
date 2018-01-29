@@ -8,9 +8,10 @@
     "build": "./node_modules/.bin/gulp build",
     "clean": "./node_modules/.bin/rimraf dist",
     "tsc": "./node_modules/.bin/tsc",
-    "start": "./node_modules/.bin/webpack-dev-server --history-api-fallback --inline --progress",
+    "start": "styleguidist server",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "./node_modules/.bin/gulp build"
+    "prepare": "./node_modules/.bin/gulp build",
+    "build-styleguide": "styleguidist build"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,7 @@
     "@types/lodash": "^4.14.88",
     "@types/react": "^16.0.28",
     "@types/react-dom": "^16.0.3",
-    "@types/react-router": "^4.0.19",
+    "@types/react-router": "^4.0.21",
     "@types/react-router-dom": "^4.2.3",
     "css-loader": "^0.28.7",
     "debug-loader": "0.0.1",
@@ -41,12 +42,13 @@
     "merge2": "^1.2.0",
     "npm-run-all": "^4.1.2",
     "postcss-loader": "^2.0.9",
+    "react-docgen-typescript": "^1.2.3",
+    "react-styleguidist": "^6.2.0",
     "rimraf": "^2.6.2",
     "style-loader": "^0.19.0",
     "ts-loader": "^3.2.0",
     "typescript": "^2.6.2",
-    "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.9.7"
+    "webpack": "^3.10.0"
   },
   "dependencies": {
     "bootstrap": "^4.0.0-beta.2",

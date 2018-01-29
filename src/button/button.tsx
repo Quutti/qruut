@@ -6,12 +6,18 @@ const styles: { [key: string]: any } = require("./button.css");
 export type ButtonClickHandler = () => void;
 
 export interface ButtonProps {
+    /**
+     * Text in a button
+     */
     text: string;
     className?: string;
     disabled?: boolean;
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
+/**
+ * Button component
+ */
 export class Button extends React.Component<ButtonProps, {}> {
 
     static defaultProps: Partial<ButtonProps> = {
@@ -51,3 +57,5 @@ export class Button extends React.Component<ButtonProps, {}> {
     }
 
 }
+
+export default Button;
