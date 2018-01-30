@@ -1,30 +1,33 @@
 import * as React from "react";
+import * as classNames from "classnames";
 import { Link } from "react-router-dom";
 
 const styles: { [key: string]: any } = require("./list-item.css");
 
 export interface ListItemProps {
+    /**
+     * If defined, item will be presented as link
+     */
     to?: string;
     className?: string;
 }
 
-export class ListItem extends React.Component<ListItemProps, {}> {
+export const ListItem: React.SFC<ListItemProps> = (props) => {
+    const classes = classNames(styles.root, props.className);
 
-    static defaultProps: Partial<ListItemProps> = {
-        className: ""
-    }
-
-    public render(): JSX.Element {
-        const { className, children } = this.props;
-        const classes = [styles.root, ...className.split(" ")].join(" ");
-        return <li className={classes}>{this._getInnerContent()}</li>;
-    }
-
-    private _getInnerContent(): JSX.Element {
-        const { to, children } = this.props;
-
-        return (to)
-            ? <Link to={to} className={styles.link}>{children}</Link>
-            : <div className={styles.content}>{children}</div>;
-    }
+    return (
+        <li className={classes}>
+            {
+                (props.to)
+                    ? <Link to={props.to} className={styles.link}>{props.children}</Link>
+                    : <div className={styles.content}>{props.children}</div>
+            }
+        </li>
+    );
 }
+
+ListItem.defaultProps = {
+    className: ""
+}
+
+export default ListItem;

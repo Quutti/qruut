@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as classNames from "classnames";
 
 const styles: { [key: string]: any } = require("./list.css");
 
@@ -6,16 +7,13 @@ export interface ListProps {
     className?: string;
 }
 
-export class List extends React.Component<ListProps, {}> {
-
-    static defaultProps: Partial<ListProps> = {
-        className: ""
-    }
-
-    public render(): JSX.Element {
-        const { className, children } = this.props;
-        const classes = [styles.root, ...className.split(" ")].join(" ");
-        return <ul className={classes}>{this.props.children}</ul>
-    }
-
+export const List: React.SFC<ListProps> = (props) => {
+    const classes = classNames(styles.root, props.className);
+    return <ul className={classes}>{props.children}</ul>
 }
+
+List.defaultProps = {
+    className: ""
+}
+
+export default List;
