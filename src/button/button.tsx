@@ -3,59 +3,41 @@ import * as classNames from "classnames";
 
 const styles: { [key: string]: any } = require("./button.css");
 
-export type ButtonClickHandler = () => void;
-
 export interface ButtonProps {
-    /**
-     * Text in a button
-     */
     text: string;
     className?: string;
     disabled?: boolean;
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
+const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>, props: ButtonProps) => {
+    event.preventDefault();
+    if (!props.disabled) {
+        props.onClick(event);
+    }
+}
+
 /**
  * Button component
  */
-export class Button extends React.Component<ButtonProps, {}> {
+export const Button: React.SFC<ButtonProps> = (props) => {
+    const { text, disabled, className } = props;
+    const classes = classNames(styles.root, className, {
+        [styles.disabled]: disabled
+    });
 
-    static defaultProps: Partial<ButtonProps> = {
-        className: ""
-    }
+    return (
+        <button
+            className={classes}
+            onClick={(event) => handleButtonClick(event, props)}
+            disabled={disabled}>
+            <span className={styles.text}>{text}</span>
+        </button>
+    );
+}
 
-    constructor(props) {
-        super(props);
-
-        this._handleClick = this._handleClick.bind(this);
-    }
-
-    public render(): JSX.Element {
-        const { text, disabled, className } = this.props;
-        const classes = [styles.root, ...className.split(" ")];
-
-        if (disabled) {
-            classes.push(styles.disabled);
-        }
-
-        return (
-            <button
-                className={classes.join(" ")}
-                onClick={this._handleClick}
-                disabled={disabled}>
-                <span className={styles.text}>{text}</span>
-            </button>
-        );
-    }
-
-
-    private _handleClick(evt: React.MouseEvent<HTMLButtonElement>) {
-        evt.preventDefault();
-        if (!this.props.disabled) {
-            this.props.onClick(evt);
-        }
-    }
-
+Button.defaultProps = {
+    className: ""
 }
 
 export default Button;
