@@ -40,6 +40,11 @@ export const datesMatch = (date1: Date, date2: Date): boolean => {
     return dateInMs(date1) === dateInMs(date2);
 }
 
+export const dateToJSONDate = (date: Date): string => {
+    const p = (v: number): string => ((v < 10) ? "0" : "") + v;
+    return `${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())}`;
+}
+
 /* Validation */
 
 export const isValidJsonDate = (dateString: string): boolean => {

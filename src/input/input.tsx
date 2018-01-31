@@ -4,6 +4,9 @@ import * as classNames from "classnames";
 
 import * as utils from "../utils";
 
+import { Popover } from "../popover";
+import { Calendar } from "../calendar";
+
 const styles: any = require("./input.css");
 
 export type InputTypes = "text" | "password" | "number" | "integer" | "date";
@@ -29,6 +32,7 @@ export interface InputProps {
 }
 
 export interface InputState {
+    calendarVisible: boolean;
     value: string;
     error: string;
 }
@@ -42,14 +46,19 @@ export class Input extends React.Component<InputProps, InputState> {
     }
 
     private _id: string = _.uniqueId("input");
+    private _inputRef: HTMLInputElement = null;
 
     constructor(props) {
         super(props);
 
         this.state = {
+            calendarVisible: false,
             value: "",
             error: ""
         };
+
+        this._handleInputFocus = this._handleInputFocus.bind(this);
+        this._handleSelectedDateChange = this._handleSelectedDateChange.bind(this);
     }
 
     public render(): JSX.Element {
@@ -74,13 +83,25 @@ export class Input extends React.Component<InputProps, InputState> {
                     {label}
                 </label>
                 <input
+                    ref={(ref) => this._inputRef = ref}
                     name={name}
                     id={this._id}
                     value={value}
                     className={inputClasses}
+                    readOnly={type === "date"}
                     type={internalType}
+                    onFocus={this._handleInputFocus}
                     onChange={(evt) => this._handleOnChange(evt.target.value)}
                 />
+                {
+                    (type === "date" && this._inputRef)
+                        ? (
+                            <Popover visible={this.state.calendarVisible} positionElement={this._inputRef} onCloseRequest={() => { this.setState({ calendarVisible: false }) }}>
+                                <Calendar onSelectedDateChange={this._handleSelectedDateChange} />
+                            </Popover>
+                        )
+                        : null
+                }
                 {hasError && <div className={feedbackClasses}>{error}</div>}
             </div>
         )
@@ -92,6 +113,11 @@ export class Input extends React.Component<InputProps, InputState> {
         }
     }
 
+    public componentDidMount() {
+        // Force update after mounting to make a render with inputRef
+        this.forceUpdate();
+    }
+
     public componentWillReceiveProps(newProps: InputProps) {
         // Update value if it is modified elsewhere
         // and passed as a prop for this component
@@ -99,6 +125,18 @@ export class Input extends React.Component<InputProps, InputState> {
         if (newValue !== this.props.value && newValue !== this.state.value) {
             this._handleOnChange(newValue);
         }
+    }
+
+    private _handleInputFocus(evt) {
+        if (this.props.type === "date") {
+            this.setState({ calendarVisible: true });
+        }
+    }
+
+    private _handleSelectedDateChange(date: Date) {
+        const value = (date) ? utils.dateToJSONDate(date) : "";
+        this._handleOnChange(value);
+        this.setState({ calendarVisible: false });
     }
 
     private _handleOnChange(value: string = "") {
@@ -132,9 +170,9 @@ export class Input extends React.Component<InputProps, InputState> {
             return "";
         }
     }
-
-
 }
+
+export default Input;
 
 const internalValidators: { [key: string]: InputValidator } = {
 
