@@ -30,3 +30,5 @@ export class TableColumn extends React.Component<TableColumnProps, {}> {
         return null;
     }
 }
+
+export default TableColumn;

@@ -174,6 +174,8 @@ export class Calendar extends React.Component<CalendarProps, CalendarState> {
 
 }
 
+export default Calendar;
+
 function getFirstDayOfMonth(date: Date): Date {
     const d = new Date(date.valueOf());
     d.setDate(1);

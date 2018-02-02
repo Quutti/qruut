@@ -441,3 +441,5 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
     }
 
 }
+
+export default LineChart;
