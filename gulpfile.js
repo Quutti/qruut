@@ -2,6 +2,7 @@ const gulp = require("gulp");
 const typescript = require("gulp-typescript");
 const clean = require("gulp-clean");
 const merge = require("merge2");
+const babel = require("gulp-babel");
 
 const src = "./src";
 const dest = "./dist";
@@ -18,13 +19,23 @@ function compileTypescript() {
         .pipe(gulp.dest(dest, { base: "." }))
 };
 
+function compileJavascript() {
+    const babelOptions = {
+        presets: ['env']
+    }
+
+    return gulp.src(getSrc("js"))
+        .pipe(babel(babelOptions))
+        .pipe(gulp.dest(dest, { base: "." }))
+}
+
 function copyResources() {
-    return gulp.src([...getSrc("css"), ...getSrc("js"), ...getSrc("d.ts")])
+    return gulp.src([...getSrc("css"), ...getSrc("d.ts")])
         .pipe(gulp.dest(dest, { base: "." }));
 }
 
 gulp.task("build", ["clean"], () => {
-    return merge([compileTypescript(), copyResources()]);
+    return merge([compileTypescript(), compileJavascript(), copyResources()]);
 });
 
 gulp.task("clean", () => {
