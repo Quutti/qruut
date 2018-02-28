@@ -29,13 +29,6 @@
 
 .cell {
     padding: .75rem 1.25rem;
-    width: 1%;
-    white-space: nowrap;
-
-    &:last-child {
-        width: auto;
-        white-space: normal;
-    }
 }
 
 .checkboxCell {
