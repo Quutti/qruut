@@ -16,19 +16,18 @@ export interface TableColumnProps {
     customSorterFactory?: TableSorterFunctionFactory;
 }
 
-export class TableColumn extends React.Component<TableColumnProps, {}> {
+export const TableColumn: React.SFC<TableColumnProps> = (props) => {
+    return null;
+};
 
-    static defaultProps: Partial<TableColumnProps> = {
-        type: "text",
+TableColumn.defaultProps = {
+    type: "text",
 
-        // On a column level, filterable and sortable are true by default
-        filterable: true,
-        sortable: true
-    }
-
-    public render(): JSX.Element {
-        return null;
-    }
+    // On a column level, filterable and sortable are true by default
+    filterable: true,
+    sortable: true
 }
+
+TableColumn.displayName = 'TableColumn';
 
 export default TableColumn;

@@ -247,8 +247,9 @@ export class Table extends React.Component<TableProps, TableState> {
 
     private _getChildrenOfType(type: string): any[] {
         const children = [];
-        React.Children.forEach(this.props.children, (c: any, index: number) => {
-            if (c.type.name === type) {
+        React.Children.forEach(this.props.children, (c: React.ReactElement<any>, index: number) => {
+            const t = c.type as React.SFC<any>;
+            if (t.displayName === type) {
                 children.push(c);
             }
         });
