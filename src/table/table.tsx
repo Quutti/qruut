@@ -21,6 +21,7 @@ export interface TableProps {
     sortable?: boolean;
     uniqueIdKey?: string;
     itemsPerPage?: number;
+    responsive?: boolean;
     selectable?: boolean;
     onSelectionChange?: (selectedIds: any[]) => void;
 }
@@ -33,6 +34,10 @@ export interface TableState {
 }
 
 export class Table extends React.Component<TableProps, TableState> {
+
+    static defaultProps: Partial<TableProps> = {
+        responsive: true
+    }
 
     constructor(props) {
         super(props);
@@ -58,9 +63,13 @@ export class Table extends React.Component<TableProps, TableState> {
         const filteredData = this._getFilteredData(data);
         const sortedData = this._getSortedData(filteredData);
 
+        const tableClasses = classNames(styles.table, {
+            [styles.responsive]: this.props.responsive
+        });
+
         return (
             <div className={styles.root}>
-                <table className={styles.table}>
+                <table className={tableClasses}>
                     {this._createTableHead()}
                     {this._createTableBody(sortedData)}
                 </table>
