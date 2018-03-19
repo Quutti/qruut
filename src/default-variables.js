@@ -23,6 +23,7 @@ function getVariables() {
         "font-family": "Roboto",
         "font-size": "16px",
         "color": "#333",
+        "secondary-color": "#777",
         "shadow": "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)"
     });
 

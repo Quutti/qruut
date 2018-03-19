@@ -6,3 +6,4 @@ export * from "./list";
 export * from "./line-chart";
 export * from "./input";
 export * from "./calendar";
+export * from "./gauge-chart";
