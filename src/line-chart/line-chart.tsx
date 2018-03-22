@@ -156,6 +156,7 @@ export class LineChart extends React.Component<LineChartProps, LineChartState> {
         const containerOffsetWidth = this._containerRef.offsetWidth;
 
         this._svg = d3.select(this._containerRef).append("svg")
+            .attr('class', styles.svg)
             .attr('height', this.props.height)
             .attr('width', "100%");
 

@@ -8,13 +8,19 @@
     }
 }
 
+.svg {
+    overflow: initial;
+}
+
 .linePath {
     stroke-width: 2px;
     fill: transparent;
     stroke: $line-chart-default-line-color;
 }
 
-.linePathDot {}
+.linePathDot {
+
+}
 
 .axisGroup {
     & line {
