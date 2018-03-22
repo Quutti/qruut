@@ -53,6 +53,12 @@ export class GaugeChart extends React.Component<GaugeChartProps, {}> {
     private _arc: d3.Arc<any, d3.DefaultArcObject> = null;
     private _svgSize: Size = { width: 0, height: 0 }
 
+    constructor(props) {
+        super(props);
+
+        this._handleResize = this._handleResize.bind(this);
+    }
+
     public render(): JSX.Element {
 
         const { value, errorLevel, warningLevel, min, max, valueTextBuilder, unitText } = this.props;
@@ -104,11 +110,11 @@ export class GaugeChart extends React.Component<GaugeChartProps, {}> {
         this._create();
         this.forceUpdate();
 
-        window.addEventListener("resize", this._handleResize.bind(this));
+        window.addEventListener("resize", this._handleResize);
     }
 
     public componentWillUnmount() {
-        window.removeEventListener("resize", this._handleResize.bind(this));
+        window.removeEventListener("resize", this._handleResize);
     }
 
     private _handleResize() {
