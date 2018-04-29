@@ -7,3 +7,4 @@ export * from "./line-chart";
 export * from "./input";
 export * from "./calendar";
 export * from "./gauge-chart";
+export * from './select';

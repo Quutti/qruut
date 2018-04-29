@@ -69,6 +69,15 @@ function getVariables() {
         "input-font-size": "1rem"
     });
 
+    // Select
+
+    styleObjects.push({
+        "select-error-color": variables["error-color"],
+        "select-border-color": "#c3c3c3",
+        "select-padding": ".375rem .75rem",
+        "select-font-size": "1rem"
+    });
+
     // Popover
 
     styleObjects.push({
